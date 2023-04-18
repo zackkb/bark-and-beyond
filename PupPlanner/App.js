@@ -12,6 +12,10 @@ export default function App() {
   );
 }
 
+test("should first", () => {
+  second;
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
