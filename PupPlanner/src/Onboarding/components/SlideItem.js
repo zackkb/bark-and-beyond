@@ -6,11 +6,7 @@ const { width, height } = Dimensions.get("screen");
 const SlideItem = ({ item }) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={item.img}
-        resizeMode="contain"
-        style={styles.image}
-      />
+      <Image source={item.img} resizeMode="contain" style={styles.image} />
 
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
