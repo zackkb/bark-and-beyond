@@ -27,32 +27,33 @@ const Slider = () => {
   };
 
   const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
-    // console.log("viewableItems", viewableItems);
-    setIndex(viewableItems[0].index);
+    if (viewableItems && viewableItems.length > 0) {
+      setIndex(viewableItems[0].index);
+    }
   }).current;
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
 
+  const lastIndex = Slides.length - 1;
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <FlatList
         data={Slides}
-        renderItem={({ item }) => <SlideItem item={item} />}
+        renderItem={({ item, index }) => (
+          <SlideItem item={item} index={index} lastIndex={lastIndex} />
+        )}
         horizontal
         pagingEnabled
-        snapToAlignment="center"
         showsHorizontalScrollIndicator={false}
         onScroll={handleOnScroll}
         onViewableItemsChanged={handleOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
-      <Pagination
-        data={Slides}
-        scrollX={scrollX}
-        index={index}
-      />
+
+      <Pagination data={Slides} scrollX={scrollX} index={index} />
     </View>
   );
 };
