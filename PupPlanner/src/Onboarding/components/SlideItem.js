@@ -9,6 +9,8 @@ import {
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
+import { firebase } from "../../../Firebase/firebase";
+
 const { width, height } = Dimensions.get("screen");
 
 const SlideItem = ({ item, index, lastIndex }) => {
@@ -16,7 +18,11 @@ const SlideItem = ({ item, index, lastIndex }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={item.img} resizeMode="contain" style={styles.image} />
+      <Image
+        source={item.img}
+        resizeMode="contain"
+        style={styles.image}
+      />
 
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
@@ -66,14 +72,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
+    color: "#000",
     marginBottom: 10,
   },
   description: {
     fontSize: 16,
     fontWeight: 400,
     lineHeight: 19.36,
-    color: "#333",
+    color: "#000",
     textAlign: "center",
     flexWrap: "wrap",
   },
