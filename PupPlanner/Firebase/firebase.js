@@ -12,15 +12,8 @@ const firebaseConfig = {
   measurementId: "G-WR80XTCQVG",
 };
 
-let app;
-
-if (firebase.apps.length === 0) {
-  app = firebase.initializeApp(firebaseConfig);
-} else {
-  app = firebase.app();
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
 
-const db = app.firestore();
-const auth = firebase.auth();
-
-export { db, auth };
+export { firebase };

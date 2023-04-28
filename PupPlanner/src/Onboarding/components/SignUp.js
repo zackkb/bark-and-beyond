@@ -9,23 +9,43 @@ import {
 import React, { useState } from "react";
 import { firebase } from "../../../Firebase/firebase";
 
-const Login = () => {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+const SignUp = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   function emailChange(value) {
-    setemail(value);
+    setEmail(value);
+  }
+
+  function validateEmail(email) {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
   }
 
   function passwordChange(value) {
-    setpassword(value);
+    setPassword(value);
+    if (value.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+    } else {
+      setErrorMessage("");
+    }
   }
 
   function createUser() {
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {});
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+    } else if (!validateEmail(email)) {
+      setErrorMessage("Please enter a valid email address.");
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {})
+        .catch((error) => {
+          setErrorMessage(error.message);
+        });
+    }
   }
 
   return (
@@ -45,12 +65,17 @@ const Login = () => {
         style={styles.password}
         placeholder="Enter your password"
         placeholderTextColor="#000"
+        secureTextEntry={true}
       />
+      {errorMessage !== "" && (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      )}
+      <View style={styles.lineBreak}></View>
 
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => console.log(firebase)}
-        //onPress={createUser}
+        //onPress={() => console.log(firebase)}
+        onPress={createUser}
         //onPress={() => console.log(email, password)}
       >
         <Text style={styles.continueText}>Continue</Text>
@@ -69,7 +94,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
 
 const styles = StyleSheet.create({
   header: {
@@ -117,6 +142,15 @@ const styles = StyleSheet.create({
     marginTop: 364,
     paddingLeft: 15,
     color: "#333",
+  },
+  lineBreak: {
+    position: "absolute",
+    width: 327,
+    height: 0,
+    borderWidth: 1,
+    borderColor: "black",
+    left: 41,
+    top: 550,
   },
   continueButton: {
     display: "flex",

@@ -20,9 +20,18 @@ const App = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Slider" component={Slider} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen
+          name="Slider"
+          component={Slider}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

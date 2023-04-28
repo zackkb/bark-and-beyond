@@ -6,28 +6,55 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { firebase } from "../../../Firebase/firebase";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function emailChange(value) {
+    setEmail(value);
+  }
+
+  function passwordChange(value) {
+    setPassword(value);
+  }
+
+  function loginUser() {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email.trim(), password)
+      .then((userCredential) => {
+        console.log(userCredential);
+      });
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Login</Text>
 
       <TextInput
+        onChangeText={emailChange}
+        value={email}
         style={styles.email}
         placeholder="Enter your email address"
         placeholderTextColor="#000"
       />
       <TextInput
+        onChangeText={passwordChange}
+        value={password}
         style={styles.password}
         placeholder="Enter your password"
         placeholderTextColor="#000"
+        secureTextEntry={true}
       />
 
+      <View style={styles.lineBreak}></View>
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => console.log(firebase)}
+        // onPress={() => console.log(firebase)}
+        onPress={loginUser}
       >
         <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
@@ -93,6 +120,15 @@ const styles = StyleSheet.create({
     marginTop: 364,
     paddingLeft: 15,
     color: "#333",
+  },
+  lineBreak: {
+    position: "absolute",
+    width: 327,
+    height: 0,
+    borderWidth: 1,
+    borderColor: "black",
+    left: 41,
+    top: 550,
   },
   continueButton: {
     display: "flex",
