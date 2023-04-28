@@ -49,8 +49,8 @@ const Login = () => {
 
       <TouchableOpacity
         style={styles.continueButton}
-        onPress={() => console.log(firebase)}
-        //onPress={createUser}
+        //onPress={() => console.log(firebase)}
+        onPress={createUser}
         //onPress={() => console.log(email, password)}
       >
         <Text style={styles.continueText}>Continue</Text>
