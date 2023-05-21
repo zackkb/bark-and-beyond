@@ -25,15 +25,3 @@ export default [
     img: require("../assets/new-logo.png"),
   },
 ];
-/*
-const Onboarding = ({ navigation }) => {
-
-    const renderSlide = ({ }) => {
-        return (
-            <View style={styles.slide}>
-                <Image source={item.image} style={styles.image} />
-            </View>
-        )
-    }
-}
-*/
