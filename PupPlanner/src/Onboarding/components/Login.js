@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,45 +7,18 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
 import { firebase } from "../../../Firebase/firebase";
-//Social Media Sign-in methods
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import appleAuth from "@invertase/react-native-apple-authentication";
-import { LoginManager, AccessToken } from "react-native-fbsdk-next";
-import Config from "react-native-config";
+import { useNavigation } from "@react-navigation/native";
 
-// Create a context to share the user state across the application
-export const UserContext = createContext(null);
-
-// Create a provider component for the UserContext
-export const UserProvider = ({ children }) => {
-  // Declare user state
-  const [user, setUser] = useState(null);
-
-  // When the component mounts, start listening to auth changes in Firebase
-  useEffect(() => {
-    // onAuthStateChanged returns a method that unsubscribes the auth listener
-    const unsubscribe = firebase.auth().onAuthStateChanged(setUser);
-
-    // unsubscribe to the listener when unmounting
-    return unsubscribe;
-  }, []);
-
-  // Use the UserContext.Provider to allow access to the user state in child components
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+const isEmailValid = (value) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(value);
 };
 
-// Function to validate email using a regular expression
-const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isPasswordValid = (value) => value.length >= 6;
 
-// Function to validate password length
-const isPasswordValid = (password) => password.length >= 6;
-
-// A reusable Input Field component
 const InputField = ({
   value,
   onChangeText,
@@ -66,174 +39,68 @@ const InputField = ({
   </View>
 );
 
-// A reusable Error Text component
 const ErrorText = ({ error }) => <Text style={styles.error}>{error}</Text>;
 
-// A reusable Social Button component
-const SocialButton = ({ logo, text, onPress }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.button, styles.socialButton]}
-  >
+const SocialButton = ({ logo, text }) => (
+  <TouchableOpacity style={styles.socialButton}>
     <View style={styles.buttonContent}>
       <View style={styles.logoContainer}>
-        <Image source={logo} style={styles.logo} />
+        <Image
+          source={logo}
+          style={styles.logo}
+        />
       </View>
       <Text style={styles.buttonSocialText}>{text}</Text>
     </View>
   </TouchableOpacity>
 );
 
-// Login Component
 const Login = () => {
-  // Fetch user from UserContext and navigation from react-navigation
-  const user = useContext(UserContext);
-  const navigation = useNavigation();
-
-  // Declare local state for email, password, and error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigation = useNavigation();
 
-  // Configure Google Sign-in on mount
-  useEffect(() => {
-    GoogleSignin.configure({ webClientId: Config.WEB_CLIENT_ID });
-  }, []);
-
-  // When user changes, navigate to Dashboard if user is logged in
-  useEffect(() => {
-    if (user) {
-      navigation.navigate("Dashboard");
-    }
-  }, [user]);
-
-  // Function to handle change in email input
-  const handleEmailChange = (email) => {
-    setEmail(email.trim());
+  const handleEmailChange = (value) => {
+    setEmail(value.trim());
     setEmailError("");
+    setErrorMessage("");
   };
 
-  // Function to handle change in password input
-  const handlePasswordChange = (password) => {
-    setPassword(password);
+  const handlePasswordChange = (value) => {
+    setPassword(value);
     setPasswordError("");
+    setErrorMessage("");
   };
 
-  // Function to handle login attempt
-  const handleLogin = async () => {
-    // Validate email and password
-    if (!isEmailValid(email)) {
+  const handleLogin = () => {
+    const trimmedEmail = email.trim();
+    if (!isEmailValid(trimmedEmail)) {
       setEmailError("Please enter a valid email address.");
       return;
     }
+
     if (!isPasswordValid(password)) {
       setPasswordError("Please enter a password with at least 6 characters.");
       return;
     }
-    // Attempt to sign in with email and password
-    try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
-    } catch (error) {
-      // Reset the error messages before setting a new one
-      setEmailError("");
-      setPasswordError("");
-      switch (error.code) {
-        case "auth/invalid-email":
-        case "auth/user-disabled":
-        case "auth/user-not-found":
-          setEmailError(error.message);
-          break;
-        case "auth/wrong-password":
-          setPasswordError(error.message);
-          break;
-        default:
-          // If there is a different kind of error, handle it here
-          // For simplicity, I'm setting it as a general error
-          setError(error.message);
-          break;
-      }
-    }
-  };
 
-  // Function to handle Google sign in
-  const handleGoogleLogin = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      const googleCredential = firebase.auth.GoogleAuthProvider.credential(
-        userInfo.idToken
-      );
-      await firebase.auth().signInWithCredential(googleCredential);
-    } catch (error) {
-      console.error(error);
-      setError("Google sign-in failed.");
-    }
-  };
-
-  // Function to handle Apple sign in
-  const handleAppleLogin = async () => {
-    try {
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(trimmedEmail, password)
+      .catch((error) => {
+        setErrorMessage(error.message);
       });
-
-      if (!appleAuthRequestResponse.identityToken) {
-        throw "Apple Sign-In failed - no identity token returned";
-      }
-
-      const appleCredential = new firebase.auth.OAuthProvider(
-        "apple.com"
-      ).credential({
-        idToken: appleAuthRequestResponse.identityToken,
-      });
-
-      await firebase.auth().signInWithCredential(appleCredential);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
-  // Function to handle Facebook sign in
-  const handleFacebookLogin = async () => {
-    try {
-      const result = await LoginManager.logInWithPermissions([
-        "public_profile",
-        "email",
-      ]);
-
-      if (result.isCancelled) {
-        throw "User cancelled the login process";
-      }
-
-      const data = await AccessToken.getCurrentAccessToken();
-
-      if (!data) {
-        throw "Something went wrong obtaining access token";
-      }
-
-      const facebookCredential = firebase.auth.FacebookAuthProvider.credential(
-        data.accessToken
-      );
-
-      await firebase.auth().signInWithCredential(facebookCredential);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // A boolean to disable login button if inputs are invalid
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
 
-  // Render the login form
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Log In</Text>
       <View style={styles.backGreen}>
-        <SafeAreaView />
-
         <InputField
           value={email}
           onChangeText={handleEmailChange}
@@ -242,8 +109,6 @@ const Login = () => {
         />
 
         {emailError && <ErrorText error={emailError} />}
-        {passwordError && <ErrorText error={passwordError} />}
-        {error && <ErrorText error={error} />}
 
         <InputField
           value={password}
@@ -253,12 +118,19 @@ const Login = () => {
           secureTextEntry={true}
         />
 
+        {passwordError && <ErrorText error={passwordError} />}
+
+        {errorMessage && (
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
+        )}
+
         <TouchableOpacity
           style={[
             styles.continueButton,
             isButtonDisabled && styles.disabledButton,
           ]}
-          onPress={handleLogin}
+          //   onPress={handleLogin}
+          onPress={() => navigation.navigate("CreateProfile")}
           disabled={isButtonDisabled}
         >
           <Text
@@ -276,17 +148,14 @@ const Login = () => {
         <SocialButton
           logo={require("../assets/gmail_logo.png")}
           text="Continue with Gmail"
-          onPress={handleGoogleLogin}
         />
         <SocialButton
           logo={require("../assets/apple_logo.png")}
           text="Continue with Apple"
-          onPress={handleAppleLogin}
         />
         <SocialButton
           logo={require("../assets/facebook_logo.png")}
           text="Continue with Facebook"
-          onPress={handleFacebookLogin}
         />
       </View>
     </KeyboardAwareScrollView>
@@ -301,15 +170,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     width: "100%",
-    paddingTop: 50,
   },
   header: {
-    fontSize: 30,
+    fontSize: 50,
     fontWeight: "bold",
     color: "black",
     textAlign: "center",
-    marginBottom: 40,
-    marginTop: 20,
+    marginTop: 106,
   },
   backGreen: {
     flex: 1,
@@ -318,39 +185,41 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: "center",
-    paddingTop: 20,
+    paddingTop: 49,
   },
   inputContainer: {
     width: "90%",
-    marginBottom: 20,
   },
   inputLabel: {
     fontSize: 16,
-    marginBottom: 5,
+    marginBottom: 6,
     fontWeight: "bold",
+    marginTop: 24,
   },
   input: {
     height: 48,
-    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
     padding: 12,
     backgroundColor: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   lineBreak: {
     height: 1,
     backgroundColor: "black",
     width: "90%",
-    marginVertical: 20,
+    marginVertical: 48,
   },
   continueButton: {
     backgroundColor: "#323841",
     height: 48,
-    width: 183,
+    width: "45%",
     borderRadius: 30,
     justifyContent: "center",
     alignSelf: "center",
     alignItems: "center",
+    marginTop: 38,
   },
   disabledButton: {
     backgroundColor: "gray",
@@ -365,6 +234,8 @@ const styles = StyleSheet.create({
   },
   socialButton: {
     backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#323841",
     width: "90%",
     height: 48,
     borderRadius: 30,
@@ -372,7 +243,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingLeft: 15,
-    marginVertical: 10,
+    marginVertical: 8,
   },
   buttonContent: {
     flexDirection: "row",

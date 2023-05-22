@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,10 +7,12 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { firebase } from "../../../Firebase/firebase";
 
 const InputField = ({
   value,
@@ -32,13 +35,69 @@ const InputField = ({
 );
 
 const CreateDogProfile = () => {
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [weight, setWeight] = useState("");
+  const [breed, setBreed] = useState("");
+  const [notes, setNotes] = useState("");
+  const dogRef = firebase.firestore().collection("dogProfiles");
+
   const navigation = useNavigation();
 
+  const handleNameChange = (value) => {
+    setName(value);
+  };
+
+  const handleAgeChange = (value) => {
+    setAge(value);
+  };
+
+  const handleWeightChange = (value) => {
+    setWeight(value);
+  };
+
+  const handleBreedChange = (value) => {
+    setBreed(value);
+  };
+
+  const handleNotesChange = (value) => {
+    setNotes(value);
+  };
+
+  //add human to humanProfiles collection
+  const addDog = () => {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const data = {
+      petName: name,
+      petAge: age,
+      weight: weight,
+      breed: breed,
+      specialNotes: notes,
+      createdAt: timestamp,
+    };
+    dogRef
+      .add(data)
+      .then(() => {
+        setName("");
+        setAge("");
+        setWeight("");
+        setBreed("");
+        setNotes("");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const createAndMoveScreens = () => {
+    addDog();
+    navigation.navigate("CreateDogProfile");
+  };
+
   return (
-    <ScrollView>
+    <KeyboardAwareScrollView>
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
-
         <TouchableOpacity style={styles.photoButton}>
           <Image
             style={styles.photoImage}
@@ -48,43 +107,41 @@ const CreateDogProfile = () => {
 
         <Text style={styles.tellUs}>Tell us about your pup</Text>
 
-        <View style={styles.pupNameBox}>
-          <Text style={styles.inputHead}>Pup's name</Text>
-          <TextInput
-            style={[styles.inputBox, { backgroundColor: "white" }]}
-            placeholder="Enter pup's name"
-            placeholderTextColor="#000"
-          />
-        </View>
-
-        <TextInput
-          style={[styles.subBox, { backgroundColor: "white" }]}
+        <InputField
+          value={name}
+          onChangeText={handleNameChange}
+          label="Pup's name"
+          placeholder="Enter pup's name"
+        />
+        <InputField
+          value={age}
+          onChangeText={handleAgeChange}
+          label="Pup's age"
           placeholder="How old is your pup"
-          placeholderTextColor="#000"
         />
-
-        <TextInput
-          style={[styles.subBox, { backgroundColor: "white" }]}
+        <InputField
+          value={weight}
+          onChangeText={handleWeightChange}
+          label="Pup's weight"
           placeholder="Enter weight in lbs"
-          placeholderTextColor="#000"
         />
-
-        <TextInput
-          style={[styles.subBox, { backgroundColor: "white" }]}
+        <InputField
+          value={breed}
+          onChangeText={handleBreedChange}
+          label="Breed"
           placeholder="Enter your pup's breed"
-          placeholderTextColor="#000"
         />
-        <TextInput
-          style={[styles.subBox, { backgroundColor: "white" }]}
+        <InputField
+          value={notes}
+          onChangeText={handleNotesChange}
+          label="Notes for pup"
           placeholder="Enter any special needs or notes"
-          placeholderTextColor="#000"
         />
 
         <TouchableOpacity
           style={styles.continueButton}
           // onPress={() => console.log(firebase)}
-          //onPress={loginUser}
-          onPress={() => navigation.navigate("CreateProfile")}
+          onPress={createAndMoveScreens}
         >
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
@@ -93,13 +150,20 @@ const CreateDogProfile = () => {
           <Text style={styles.goBack}>Go Back</Text>
         </TouchableOpacity>
       </SafeAreaView>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 
 export default CreateDogProfile;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
+    backgroundColor: "#B8DFA9",
+  },
   header: {
     //  fontFamily: "poppins",
     fontSize: 50,
@@ -108,60 +172,38 @@ const styles = StyleSheet.create({
     marginTop: 103,
     textAlign: "center",
   },
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    flex: 1,
-    backgroundColor: "#B8DFA9",
-  },
   tellUs: {
     fontWeight: "700",
     fontSize: 16,
     lineHeight: 24,
     marginTop: 40,
-    marginRight: 180,
+    marginBottom: 16,
+    marginRight: 215,
   },
-  pupNameBox: {
-    alignItems: "center",
-    width: "100%",
-    marginTop: 32,
+  inputContainer: {
+    width: "90%",
   },
-  inputHead: {
+  inputLabel: {
     fontSize: 16,
-    fontWeight: "700",
-  },
-  inputBox: {
-    fontSize: 16,
+    marginBottom: 5,
+    marginTop: 16,
     fontWeight: "bold",
-    width: "84%",
+  },
+  input: {
     height: 48,
+    borderColor: "#333",
     borderWidth: 1,
     borderRadius: 10,
-    paddingLeft: 15,
-    marginTop: 6,
-    color: "#333",
-  },
-  subBox: {
+    padding: 12,
+    backgroundColor: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
-    padding: 0,
-    gap: 6,
-    width: "84%",
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 15,
-    marginTop: 46,
-    color: "#333",
   },
   continueButton: {
     display: "flex",
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    width: 183,
+    width: "45%",
     height: 48,
     backgroundColor: "#323841",
     borderRadius: 30,

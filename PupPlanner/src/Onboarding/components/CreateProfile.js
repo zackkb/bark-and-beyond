@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,54 +7,113 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  Dimensions,
-  Platform,
-  KeyboardAvoidingView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 
-const { width, height } = Dimensions.get("screen");
+import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { firebase } from "../../../Firebase/firebase";
+
+const InputField = ({
+  value,
+  onChangeText,
+  label,
+  placeholder,
+  secureTextEntry = false,
+}) => (
+  <View style={styles.inputContainer}>
+    <Text style={styles.inputLabel}>{label}</Text>
+    <TextInput
+      onChangeText={onChangeText}
+      value={value}
+      style={styles.input}
+      placeholder={placeholder}
+      placeholderTextColor="#000"
+      secureTextEntry={secureTextEntry}
+    />
+  </View>
+);
 
 const CreateProfile = () => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const humanRef = firebase.firestore().collection("humanProfiles");
+
   const navigation = useNavigation();
 
+  const handleNameChange = (value) => {
+    setName(value);
+  };
+
+  const handlePhoneChange = (value) => {
+    setPhone(value);
+  };
+
+  //add human to humanProfiles collection
+  const addHuman = () => {
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    const data = {
+      ownerName: name,
+      phoneNumber: phone,
+      createdAt: timestamp,
+    };
+    humanRef
+      .add(data)
+      .then(() => {
+        setName("");
+        setPhone("");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const createAndMoveScreens = () => {
+    addHuman();
+    navigation.navigate("CreateDogProfile");
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <SafeAreaView style={styles.backGreen}></SafeAreaView>
+    <KeyboardAwareScrollView>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.header}>Create Profile</Text>
+        <TouchableOpacity style={styles.photoButton}>
+          <Image
+            style={styles.photoImage}
+            source={require("../assets/add-photo.png")}
+          />
+        </TouchableOpacity>
 
-      <Text style={styles.header}>Create Profile</Text>
+        <Text style={styles.contact}>How can we contact you?</Text>
 
-      <TouchableOpacity style={styles.photoButton}>
-        <Image
-          style={styles.photoImage}
-          source={require("../assets/add-photo.png")}
+        <InputField
+          value={name}
+          onChangeText={handleNameChange}
+          label="Your name"
+          placeholder="Enter your full name"
         />
-      </TouchableOpacity>
+        <InputField
+          value={phone}
+          onChangeText={handlePhoneChange}
+          label="Phone number"
+          placeholder="Enter your phone number"
+        />
 
-      <Text style={styles.contact}>How can we contact you?</Text>
+        <TouchableOpacity
+          style={styles.continueButton}
+          // onPress={() => console.log(firebase)}
+          // onPress={() => navigation.navigate("CreateDogProfile")}
+          //  onPress={addName}
+          onPress={createAndMoveScreens}
+        >
+          <Text style={styles.continueText}>Continue</Text>
+        </TouchableOpacity>
 
-      <TextInput
-        style={[styles.textBox, styles.nameBox, { backgroundColor: "white" }]}
-        placeholder="Enter your full name"
-        placeholderTextColor="#000"
-      />
-
-      <TextInput
-        style={[styles.textBox, styles.phoneBox, { backgroundColor: "white" }]}
-        placeholder="Enter your phone number"
-        placeholderTextColor="#000"
-      />
-
-      <TouchableOpacity
-        style={styles.continueButton}
-        onPress={() => navigation.navigate("CreateDogProfile")}
-      >
-        <Text style={styles.continueText}>Continue</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.cancel}>Cancel</Text>
-    </SafeAreaView>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.goBack}>Go Back</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -61,74 +121,55 @@ export default CreateProfile;
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    width,
-    height,
-    left: 5,
     flex: 1,
-    // backgroundColor: "#B8DFA9",
+    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
+    backgroundColor: "#B8DFA9",
   },
   header: {
     //  fontFamily: "poppins",
     fontSize: 50,
     fontWeight: "bold",
-    position: "absolute",
     lineHeight: 75,
     marginTop: 103,
     textAlign: "center",
-  },
-  backGreen: {
-    alignItems: "center",
-    width: 400,
-    flex: 1,
-    backgroundColor: "#B8DFA9",
   },
   contact: {
     fontWeight: "700",
     fontSize: 16,
     lineHeight: 24,
-    position: "absolute",
-    width: 209,
-    left: 24,
-    top: 386,
+    marginTop: 40,
+    marginBottom: 16,
+    marginRight: 190,
   },
-  textBox: {
+  inputContainer: {
+    width: "90%",
+  },
+  inputLabel: {
     fontSize: 16,
+    marginBottom: 6,
+    marginTop: 16,
     fontWeight: "bold",
-    width: 345,
+  },
+  input: {
     height: 48,
     borderWidth: 1,
     borderRadius: 10,
-    color: "#333",
-  },
-  nameBox: {
-    padding: 0,
-    gap: 6,
-    position: "absolute",
-    top: 442,
-    paddingLeft: 15,
-    left: 24,
-  },
-  phoneBox: {
-    padding: 0,
-    gap: 6,
-    position: "absolute",
-    top: 536,
-    paddingLeft: 15,
-    left: 24,
+    padding: 12,
+    backgroundColor: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   continueButton: {
     display: "flex",
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    position: "absolute",
-    width: 183,
+    width: "45%",
     height: 48,
-    top: 662,
     backgroundColor: "#323841",
     borderRadius: 30,
+    marginTop: 48,
   },
   continueText: {
     color: "#FFF",
@@ -136,13 +177,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cancel: {
-    position: "absolute",
-    top: 734,
     fontSize: 16,
   },
   photoButton: {
-    position: "absolute",
-    top: 202,
-    left: 124,
+    height: 144,
+    width: 144,
+    marginTop: 24,
+  },
+  goBack: {
+    fontWeight: "700",
+    fontSize: 16,
+    marginTop: 24,
+    marginBottom: 70,
   },
 });

@@ -6,7 +6,6 @@ import "expo-dev-client";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { UserProvider } from "./UserContext";
 
 import Slider from "./src/Onboarding/components/Slider";
 import SignUp from "./src/Onboarding/components/SignUp";
@@ -22,22 +21,35 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Slider"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="Slider" component={Slider} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="CreateProfile" component={CreateProfile} />
-          <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserProvider>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Slider"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen
+          name="Slider"
+          component={Slider}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+        />
+        <Stack.Screen
+          name="CreateProfile"
+          component={CreateProfile}
+        />
+        <Stack.Screen
+          name="CreateDogProfile"
+          component={CreateDogProfile}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

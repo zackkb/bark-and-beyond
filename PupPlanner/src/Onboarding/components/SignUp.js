@@ -7,14 +7,17 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { firebase } from "../../../Firebase/firebase";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const isEmailValid = (value) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(value);
+  return re.test(value.trim());
 };
 
 const isPasswordValid = (value) => value.length >= 6;
@@ -25,17 +28,39 @@ const InputField = ({
   label,
   placeholder,
   secureTextEntry = false,
+  toggleSecureEntry,
+  status,
 }) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      onChangeText={onChangeText}
-      value={value}
-      style={styles.input}
-      placeholder={placeholder}
-      placeholderTextColor="#000"
-      secureTextEntry={secureTextEntry}
-    />
+    <View
+      style={[
+        styles.inputWrapper,
+        status === "valid" && styles.valid,
+        status === "error" && styles.error,
+      ]}
+    >
+      <TextInput
+        onChangeText={onChangeText}
+        value={value}
+        style={styles.input}
+        placeholder={placeholder}
+        placeholderTextColor="#000"
+        secureTextEntry={secureTextEntry}
+        onFocus={() => status === "" && styles.active} // Apply active styles
+      />
+      {status === "valid" && <Icon name="check" size={20} color="green" />}
+      {status === "error" && <Icon name="x" size={20} color="red" />}
+      {secureTextEntry && (
+        <TouchableOpacity style={styles.icon} onPress={toggleSecureEntry}>
+          <MaterialCommunityIcons
+            name={!secureTextEntry ? "eye-off" : "eye"}
+            color="gray"
+            size={20}
+          />
+        </TouchableOpacity>
+      )}
+    </View>
   </View>
 );
 
@@ -45,10 +70,7 @@ const SocialButton = ({ logo, text }) => (
   <TouchableOpacity style={[styles.button, styles.socialButton]}>
     <View style={styles.buttonContent}>
       <View style={styles.logoContainer}>
-        <Image
-          source={logo}
-          style={styles.logo}
-        />
+        <Image source={logo} style={styles.logo} />
       </View>
       <Text style={styles.buttonSocialText}>{text}</Text>
     </View>
@@ -61,12 +83,25 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [secureEntry, setSecureEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const [emailStatus, setEmailStatus] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState("");
 
   const handleEmailChange = (value) => {
-    setEmail(value.trim());
+    setEmail(value);
     setEmailError("");
     setErrorMessage("");
+  };
+
+  const handleEmailBlur = () => {
+    if (!isEmailValid(email)) {
+      setEmailError("Please enter a valid email address.");
+      setEmailStatus("error");
+    } else {
+      setEmailStatus("valid");
+    }
   };
 
   const handlePasswordChange = (value) => {
@@ -75,14 +110,21 @@ const SignUp = () => {
     setErrorMessage("");
   };
 
-  const handleCreateUser = () => {
-    if (!isEmailValid(email)) {
-      setEmailError("Please enter a valid email address.");
-      return;
-    }
-
+  const handlePasswordBlur = () => {
     if (!isPasswordValid(password)) {
       setPasswordError("Please enter a password with at least 6 characters.");
+      setPasswordStatus("error");
+    } else {
+      setPasswordStatus("valid");
+    }
+  };
+
+  const handleCreateUser = () => {
+    setLoading(true);
+
+    // validate input before creating user
+    if (!isEmailValid(email) || !isPasswordValid(password)) {
+      setLoading(false);
       return;
     }
 
@@ -90,10 +132,11 @@ const SignUp = () => {
       .auth()
       .createUserWithEmailAndPassword(email.trim(), password)
       .then(() => {
-        console.log("User created successfully");
+        setLoading(false);
         navigation.navigate("CreateProfile");
       })
       .catch((error) => {
+        setLoading(false);
         setErrorMessage(error.message);
       });
   };
@@ -114,68 +157,83 @@ const SignUp = () => {
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Sign Up</Text>
-      <View style={styles.backGreen}>
-        <SafeAreaView />
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ ...styles.container, justifyContent: null }}
+      >
+        <Text style={styles.header}>Sign Up</Text>
 
-        <InputField
-          value={email}
-          onChangeText={handleEmailChange}
-          label="Email"
-          placeholder="Enter your email address"
-        />
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <View style={styles.backGreen}>
+            <SafeAreaView />
 
-        {emailError && <ErrorText error={emailError} />}
+            <InputField
+              value={email}
+              onChangeText={handleEmailChange}
+              onBlur={handleEmailBlur}
+              label="Email"
+              placeholder="Enter your email address"
+              status={emailStatus}
+            />
 
-        <InputField
-          value={password}
-          onChangeText={handlePasswordChange}
-          label="Password"
-          placeholder="Enter your password"
-          secureTextEntry={true}
-        />
+            {emailError && <ErrorText error={emailError} />}
 
-        {passwordError && <ErrorText error={passwordError} />}
+            <InputField
+              value={password}
+              onChangeText={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              label="Password"
+              placeholder="Enter your password"
+              secureTextEntry={secureEntry}
+              toggleSecureEntry={() => setSecureEntry(!secureEntry)}
+              isPasswordVisible={secureEntry}
+              status={passwordStatus}
+            />
 
-        {errorMessage && (
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
+            {passwordError && <ErrorText error={passwordError} />}
+
+            {errorMessage && (
+              <Text style={styles.errorMessage}>{errorMessage}</Text>
+            )}
+
+            <TouchableOpacity
+              style={[
+                styles.continueButton,
+                isButtonDisabled && styles.disabledButton,
+              ]}
+              onPress={handleCreateUser}
+              disabled={isButtonDisabled}
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  isButtonDisabled && styles.disabledButtonText,
+                ]}
+              >
+                Continue
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.lineBreak}></View>
+
+            <SocialButton
+              logo={require("../assets/gmail_logo.png")}
+              text="Continue with Gmail"
+            />
+            <SocialButton
+              logo={require("../assets/apple_logo.png")}
+              text="Continue with Apple"
+            />
+            <SocialButton
+              logo={require("../assets/facebook_logo.png")}
+              text="Continue with Facebook"
+            />
+          </View>
         )}
-
-        <TouchableOpacity
-          style={[
-            styles.continueButton,
-            isButtonDisabled && styles.disabledButton,
-          ]}
-          onPress={handleCreateUser}
-          disabled={isButtonDisabled}
-        >
-          <Text
-            style={[
-              styles.buttonText,
-              isButtonDisabled && styles.disabledButtonText,
-            ]}
-          >
-            Continue
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.lineBreak}></View>
-
-        <SocialButton
-          logo={require("../assets/gmail_logo.png")}
-          text="Continue with Gmail"
-        />
-        <SocialButton
-          logo={require("../assets/apple_logo.png")}
-          text="Continue with Apple"
-        />
-        <SocialButton
-          logo={require("../assets/facebook_logo.png")}
-          text="Continue with Facebook"
-        />
-      </View>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -187,56 +245,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     width: "100%",
-    paddingTop: 50,
   },
   header: {
-    fontSize: 30,
+    fontSize: 50,
     fontWeight: "bold",
     color: "black",
     textAlign: "center",
-    marginBottom: 40,
-    marginTop: 20,
+    marginTop: 106,
   },
   backGreen: {
-    flex: 1,
     width: "100%",
     backgroundColor: "#B8DFA9",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: "center",
-    paddingTop: 20,
+    paddingTop: 49,
   },
   inputContainer: {
     width: "90%",
-    marginBottom: 20,
   },
-  inputLabel: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: "bold",
-  },
-  input: {
-    height: 48,
-    borderColor: "gray",
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderRadius: 10,
     padding: 12,
     backgroundColor: "#FFF",
   },
+  inputLabel: {
+    fontSize: 16,
+    marginBottom: 6,
+    fontWeight: "bold",
+    marginTop: 24,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  icon: {
+    marginLeft: 10,
+  },
   lineBreak: {
     height: 1,
     backgroundColor: "black",
     width: "90%",
-    marginVertical: 20,
+    marginVertical: 48,
   },
   continueButton: {
     backgroundColor: "#323841",
     height: 48,
-    width: 183,
+    width: "45%",
     borderRadius: 30,
     justifyContent: "center",
     alignSelf: "center",
     alignItems: "center",
+    marginTop: 38,
   },
   disabledButton: {
     backgroundColor: "gray",
@@ -251,6 +315,8 @@ const styles = StyleSheet.create({
   },
   socialButton: {
     backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#323841",
     width: "90%",
     height: 48,
     borderRadius: 30,
@@ -258,7 +324,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingLeft: 15,
-    marginVertical: 10,
+    marginVertical: 8,
   },
   buttonContent: {
     flexDirection: "row",
@@ -281,13 +347,43 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
-  error: {
+  /*error: {
     color: "red",
     marginTop: 8,
     marginBottom: 8,
-  },
+  },*/
   errorMessage: {
     color: "red",
     marginTop: 10,
+  },
+  valid: {
+    shadowColor: "#88C6E7",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  error: {
+    shadowColor: "#BB0C0C",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  active: {
+    shadowColor: "#88C6E7",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
