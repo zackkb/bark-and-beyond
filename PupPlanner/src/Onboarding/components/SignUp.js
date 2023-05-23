@@ -30,14 +30,20 @@ const InputField = ({
   secureTextEntry = false,
   toggleSecureEntry,
   status,
+  onFocus,
+  onBlur,
+  errorMessage,
 }) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
     <View
       style={[
         styles.inputWrapper,
-        status === "valid" && styles.valid,
-        status === "error" && styles.error,
+        status === "valid"
+          ? styles.valid
+          : status === "error"
+          ? styles.error
+          : null,
       ]}
     >
       <TextInput
@@ -47,20 +53,27 @@ const InputField = ({
         placeholder={placeholder}
         placeholderTextColor="#000"
         secureTextEntry={secureTextEntry}
-        onFocus={() => status === "" && styles.active} // Apply active styles
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
-      {status === "valid" && <Icon name="check" size={20} color="green" />}
-      {status === "error" && <Icon name="x" size={20} color="red" />}
-      {secureTextEntry && (
+      {status === "valid" && (
+        <Icon name="check-circle-o" size={20} color="green" />
+      )}
+      {status === "error" && <Icon name="ban" size={20} color="red" />}
+      {toggleSecureEntry && (
         <TouchableOpacity style={styles.icon} onPress={toggleSecureEntry}>
           <MaterialCommunityIcons
-            name={!secureTextEntry ? "eye-off" : "eye"}
+            name={secureTextEntry ? "eye-off" : "eye"}
             color="gray"
             size={20}
           />
         </TouchableOpacity>
       )}
+      {status === "error" && (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      )}
     </View>
+    {status === "error" && <Text style={styles.error}>{errorMessage}</Text>}
   </View>
 );
 
@@ -88,18 +101,34 @@ const SignUp = () => {
   const navigation = useNavigation();
   const [emailStatus, setEmailStatus] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("");
+  const [emailFocus, setEmailFocus] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
   const handleEmailChange = (value) => {
     setEmail(value);
     setEmailError("");
     setErrorMessage("");
+    if (!emailFocus) {
+      validateEmail(value);
+    }
   };
 
   const handleEmailBlur = () => {
-    if (!isEmailValid(email)) {
+    setEmailFocus(false);
+    validateEmail(email);
+  };
+
+  const handleEmailFocus = () => {
+    setEmailFocus(true);
+    setEmailStatus("");
+  };
+
+  const validateEmail = (value) => {
+    if (!isEmailValid(value)) {
       setEmailError("Please enter a valid email address.");
       setEmailStatus("error");
     } else {
+      setEmailError("");
       setEmailStatus("valid");
     }
   };
@@ -108,13 +137,27 @@ const SignUp = () => {
     setPassword(value);
     setPasswordError("");
     setErrorMessage("");
+    if (!passwordFocus) {
+      validatePassword(value);
+    }
   };
 
   const handlePasswordBlur = () => {
-    if (!isPasswordValid(password)) {
+    setPasswordFocus(false);
+    validatePassword(password);
+  };
+
+  const handlePasswordFocus = () => {
+    setPasswordFocus(true);
+    setPasswordStatus("");
+  };
+
+  const validatePassword = (value) => {
+    if (!isPasswordValid(value)) {
       setPasswordError("Please enter a password with at least 6 characters.");
       setPasswordStatus("error");
     } else {
+      setPasswordError("");
       setPasswordStatus("valid");
     }
   };
@@ -157,83 +200,75 @@ const SignUp = () => {
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAwareScrollView
-        contentContainerStyle={{ ...styles.container, justifyContent: null }}
-      >
-        <Text style={styles.header}>Sign Up</Text>
+    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>Sign Up</Text>
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <View style={styles.backGreen}>
-            <SafeAreaView />
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <View style={styles.backGreen}>
+          <InputField
+            label="Email"
+            placeholder="Enter your email address"
+            value={email}
+            onChangeText={handleEmailChange}
+            onFocus={handleEmailFocus}
+            onBlur={handleEmailBlur}
+            status={emailFocus ? "" : emailStatus}
+          />
+          {emailError && <ErrorText error={emailError} />}
+          <InputField
+            label="Password"
+            placeholder="Enter your password"
+            secureTextEntry={secureEntry}
+            toggleSecureEntry={() => setSecureEntry(!secureEntry)}
+            value={password}
+            onChangeText={handlePasswordChange}
+            onFocus={handlePasswordFocus}
+            onBlur={handlePasswordBlur}
+            status={passwordFocus ? "" : passwordStatus}
+          />
+          {passwordError && <ErrorText error={passwordError} />}
 
-            <InputField
-              value={email}
-              onChangeText={handleEmailChange}
-              onBlur={handleEmailBlur}
-              label="Email"
-              placeholder="Enter your email address"
-              status={emailStatus}
-            />
+          {errorMessage && (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          )}
 
-            {emailError && <ErrorText error={emailError} />}
-
-            <InputField
-              value={password}
-              onChangeText={handlePasswordChange}
-              onBlur={handlePasswordBlur}
-              label="Password"
-              placeholder="Enter your password"
-              secureTextEntry={secureEntry}
-              toggleSecureEntry={() => setSecureEntry(!secureEntry)}
-              isPasswordVisible={secureEntry}
-              status={passwordStatus}
-            />
-
-            {passwordError && <ErrorText error={passwordError} />}
-
-            {errorMessage && (
-              <Text style={styles.errorMessage}>{errorMessage}</Text>
-            )}
-
-            <TouchableOpacity
+          <TouchableOpacity
+            style={[
+              styles.continueButton,
+              isButtonDisabled && styles.disabledButton,
+            ]}
+            onPress={handleCreateUser}
+            disabled={isButtonDisabled}
+          >
+            <Text
               style={[
-                styles.continueButton,
-                isButtonDisabled && styles.disabledButton,
+                styles.buttonText,
+                isButtonDisabled && styles.disabledButtonText,
               ]}
-              onPress={handleCreateUser}
-              disabled={isButtonDisabled}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  isButtonDisabled && styles.disabledButtonText,
-                ]}
-              >
-                Continue
-              </Text>
-            </TouchableOpacity>
+              Continue
+            </Text>
+          </TouchableOpacity>
 
-            <View style={styles.lineBreak}></View>
+          <View style={styles.lineBreak}></View>
 
-            <SocialButton
-              logo={require("../assets/gmail_logo.png")}
-              text="Continue with Gmail"
-            />
-            <SocialButton
-              logo={require("../assets/apple_logo.png")}
-              text="Continue with Apple"
-            />
-            <SocialButton
-              logo={require("../assets/facebook_logo.png")}
-              text="Continue with Facebook"
-            />
-          </View>
-        )}
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+          <SocialButton
+            logo={require("../assets/gmail_logo.png")}
+            text="Continue with Gmail"
+          />
+          <SocialButton
+            logo={require("../assets/apple_logo.png")}
+            text="Continue with Apple"
+          />
+          <SocialButton
+            logo={require("../assets/facebook_logo.png")}
+            text="Continue with Facebook"
+          />
+        </View>
+      )}
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -241,7 +276,6 @@ export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "space-around",
     width: "100%",
@@ -271,6 +305,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     backgroundColor: "#FFF",
+    position: "relative",
   },
   inputLabel: {
     fontSize: 16,
@@ -347,34 +382,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
-  /*error: {
-    color: "red",
-    marginTop: 8,
-    marginBottom: 8,
-  },*/
   errorMessage: {
+    position: "absolute",
     color: "red",
-    marginTop: 10,
+    fontSize: 12,
+    bottom: -20,
+    left: 0,
+    right: 0,
+    textAlign: "center",
   },
   valid: {
-    shadowColor: "#88C6E7",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderColor: "green",
   },
   error: {
-    shadowColor: "#BB0C0C",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderColor: "red",
   },
   active: {
     shadowColor: "#88C6E7",

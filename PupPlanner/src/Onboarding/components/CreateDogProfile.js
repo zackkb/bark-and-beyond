@@ -9,6 +9,9 @@ import {
   Image,
 } from "react-native";
 
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
+
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -40,9 +43,29 @@ const CreateDogProfile = () => {
   const [weight, setWeight] = useState("");
   const [breed, setBreed] = useState("");
   const [notes, setNotes] = useState("");
+  const [image, setImage] = useState(null);
   const dogRef = firebase.firestore().collection("dogProfiles");
 
   const navigation = useNavigation();
+
+  const pickImage = async () => {
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      console.log(result);
+
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    }
+  };
 
   const handleNameChange = (value) => {
     setName(value);
@@ -98,10 +121,20 @@ const CreateDogProfile = () => {
     <KeyboardAwareScrollView>
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
-        <TouchableOpacity style={styles.photoButton}>
+
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={pickImage}
+        >
+          {!image && (
+            <Image
+              style={styles.photoImage}
+              source={require("../assets/add-photo.png")}
+            />
+          )}
           <Image
-            style={styles.photoImage}
-            source={require("../assets/add-photo.png")}
+            source={{ uri: image }}
+            style={{ width: "100%", height: "100%", borderRadius: 100 }}
           />
         </TouchableOpacity>
 
