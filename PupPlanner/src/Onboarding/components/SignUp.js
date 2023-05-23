@@ -15,13 +15,33 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+// This function checks if the input string is a valid email address
 const isEmailValid = (value) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(value.trim());
 };
 
+// This function checks if the input string is a valid password (at least 6 characters long)
 const isPasswordValid = (value) => value.length >= 6;
 
+// Error messages associated with email and password validation
+const errorMessages = {
+  isEmailValid: "Please enter a valid email address.",
+  isPasswordValid: "Please enter a password with at least 6 characters.",
+};
+
+// This function validates the input and sets error and status based on the result
+const validateInput = (value, validationFn, setError, setStatus) => {
+  if (!validationFn(value)) {
+    setError(errorMessages[validationFn.name]);
+    setStatus("error");
+  } else {
+    setError("");
+    setStatus("valid");
+  }
+};
+
+// A reusable InputField component
 const InputField = ({
   value,
   onChangeText,
@@ -77,8 +97,10 @@ const InputField = ({
   </View>
 );
 
+// Component for rendering error text
 const ErrorText = ({ error }) => <Text style={styles.error}>{error}</Text>;
 
+// Component for rendering social buttons
 const SocialButton = ({ logo, text }) => (
   <TouchableOpacity style={[styles.button, styles.socialButton]}>
     <View style={styles.buttonContent}>
@@ -90,7 +112,9 @@ const SocialButton = ({ logo, text }) => (
   </TouchableOpacity>
 );
 
+// The main SignUp component
 const SignUp = () => {
+  // State variables defined using useState
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -104,18 +128,22 @@ const SignUp = () => {
   const [emailFocus, setEmailFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
 
+  // Event handlers
   const handleEmailChange = (value) => {
     setEmail(value);
-    setEmailError("");
-    setErrorMessage("");
     if (!emailFocus) {
-      validateEmail(value);
+      validateInput(value, isEmailValid, setEmailError, setEmailStatus);
     }
   };
 
   const handleEmailBlur = () => {
     setEmailFocus(false);
-    validateEmail(email);
+
+    // Trim the email input when the user finishes typing
+    const trimmedEmail = email.trim();
+    setEmail(trimmedEmail);
+
+    validateInput(trimmedEmail, isEmailValid, setEmailError, setEmailStatus);
   };
 
   const handleEmailFocus = () => {
@@ -123,28 +151,26 @@ const SignUp = () => {
     setEmailStatus("");
   };
 
-  const validateEmail = (value) => {
-    if (!isEmailValid(value)) {
-      setEmailError("Please enter a valid email address.");
-      setEmailStatus("error");
-    } else {
-      setEmailError("");
-      setEmailStatus("valid");
-    }
-  };
-
   const handlePasswordChange = (value) => {
     setPassword(value);
-    setPasswordError("");
-    setErrorMessage("");
     if (!passwordFocus) {
-      validatePassword(value);
+      validateInput(
+        value,
+        isPasswordValid,
+        setPasswordError,
+        setPasswordStatus
+      );
     }
   };
 
   const handlePasswordBlur = () => {
     setPasswordFocus(false);
-    validatePassword(password);
+    validateInput(
+      password,
+      isPasswordValid,
+      setPasswordError,
+      setPasswordStatus
+    );
   };
 
   const handlePasswordFocus = () => {
@@ -152,20 +178,11 @@ const SignUp = () => {
     setPasswordStatus("");
   };
 
-  const validatePassword = (value) => {
-    if (!isPasswordValid(value)) {
-      setPasswordError("Please enter a password with at least 6 characters.");
-      setPasswordStatus("error");
-    } else {
-      setPasswordError("");
-      setPasswordStatus("valid");
-    }
-  };
-
+  // Function to handle user creation in Firebase
   const handleCreateUser = () => {
     setLoading(true);
 
-    // validate input before creating user
+    // Validate input before creating user
     if (!isEmailValid(email) || !isPasswordValid(password)) {
       setLoading(false);
       return;
@@ -184,6 +201,7 @@ const SignUp = () => {
       });
   };
 
+  // Function to monitor the user's authentication state
   useEffect(() => {
     const monitorAuthState = () => {
       firebase.auth().onAuthStateChanged((user) => {
@@ -197,8 +215,10 @@ const SignUp = () => {
     monitorAuthState();
   }, []);
 
+  // Disable button if email or password is invalid
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
 
+  // The render function
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Sign Up</Text>
