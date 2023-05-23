@@ -53,12 +53,14 @@ const InputField = ({
   onFocus,
   onBlur,
   errorMessage,
+  active,
 }) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
     <View
       style={[
         styles.inputWrapper,
+        active ? styles.active : null,
         status === "valid"
           ? styles.valid
           : status === "error"
@@ -75,6 +77,7 @@ const InputField = ({
         secureTextEntry={secureTextEntry}
         onFocus={onFocus}
         onBlur={onBlur}
+        selectionColor="#000"
       />
       {status === "valid" && (
         <Icon name="check-circle-o" size={20} color="green" />
@@ -235,6 +238,7 @@ const SignUp = () => {
             onFocus={handleEmailFocus}
             onBlur={handleEmailBlur}
             status={emailFocus ? "" : emailStatus}
+            active={emailFocus}
           />
           {emailError && <ErrorText error={emailError} />}
           <InputField
@@ -247,6 +251,7 @@ const SignUp = () => {
             onFocus={handlePasswordFocus}
             onBlur={handlePasswordBlur}
             status={passwordFocus ? "" : passwordStatus}
+            active={passwordFocus}
           />
           {passwordError && <ErrorText error={passwordError} />}
 
@@ -418,13 +423,6 @@ const styles = StyleSheet.create({
     borderColor: "red",
   },
   active: {
-    shadowColor: "#88C6E7",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderColor: "#88C6E7",
   },
 });
