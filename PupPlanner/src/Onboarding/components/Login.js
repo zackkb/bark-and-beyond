@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -132,14 +132,17 @@ const Login = () => {
   const [passwordFocus, setPasswordFocus] = useState(false);
 
   // Event handlers
-  const handleEmailChange = (value) => {
-    setEmail(value);
-    if (!emailFocus) {
-      validateInput(value, isEmailValid, setEmailError, setEmailStatus);
-    }
-  };
+  const handleEmailChange = useCallback(
+    (value) => {
+      setEmail(value);
+      if (!emailFocus) {
+        validateInput(value, isEmailValid, setEmailError, setEmailStatus);
+      }
+    },
+    [emailFocus]
+  );
 
-  const handleEmailBlur = () => {
+  const handleEmailBlur = useCallback(() => {
     setEmailFocus(false);
 
     // Trim the email input when the user finishes typing
@@ -147,26 +150,29 @@ const Login = () => {
     setEmail(trimmedEmail);
 
     validateInput(trimmedEmail, isEmailValid, setEmailError, setEmailStatus);
-  };
+  }, [email]);
 
-  const handleEmailFocus = () => {
+  const handleEmailFocus = useCallback(() => {
     setEmailFocus(true);
     setEmailStatus("");
-  };
+  }, []);
 
-  const handlePasswordChange = (value) => {
-    setPassword(value);
-    if (!passwordFocus) {
-      validateInput(
-        value,
-        isPasswordValid,
-        setPasswordError,
-        setPasswordStatus
-      );
-    }
-  };
+  const handlePasswordChange = useCallback(
+    (value) => {
+      setPassword(value);
+      if (!passwordFocus) {
+        validateInput(
+          value,
+          isPasswordValid,
+          setPasswordError,
+          setPasswordStatus
+        );
+      }
+    },
+    [passwordFocus]
+  );
 
-  const handlePasswordBlur = () => {
+  const handlePasswordBlur = useCallback(() => {
     setPasswordFocus(false);
     validateInput(
       password,
@@ -174,14 +180,14 @@ const Login = () => {
       setPasswordError,
       setPasswordStatus
     );
-  };
+  }, [password]);
 
-  const handlePasswordFocus = () => {
+  const handlePasswordFocus = useCallback(() => {
     setPasswordFocus(true);
     setPasswordStatus("");
-  };
+  }, []);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     setLoading(true);
 
     const trimmedEmail = email.trim();
@@ -195,13 +201,29 @@ const Login = () => {
       .signInWithEmailAndPassword(trimmedEmail, password)
       .then(() => {
         setLoading(false);
-        navigation.navigate("Dashboard"); // Navigate to your main screen here
+        navigation.navigate("Dashboard"); // Navigate to main screen here
       })
       .catch((error) => {
         setLoading(false);
-        setErrorMessage(error.message);
+        let errorMsg;
+        switch (error.code) {
+          case "auth/user-not-found":
+            errorMsg =
+              "No user found with this email. Please check your input.";
+            break;
+          case "auth/wrong-password":
+            errorMsg = "Incorrect password. Please try again.";
+            break;
+          case "auth/invalid-email":
+            errorMsg = "The email address is badly formatted.";
+            break;
+          default:
+            errorMsg = "An error occurred during login. Please try again.";
+        }
+        setErrorMessage(errorMsg);
+        console.error(error);
       });
-  };
+  }, [email, password]);
 
   // Disable button if email or password is invalid
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
