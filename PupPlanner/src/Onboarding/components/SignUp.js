@@ -182,7 +182,7 @@ const SignUp = () => {
   };
 
   // Function to handle user creation in Firebase
-  const handleCreateUser = () => {
+  const handleCreateUser = async () => {
     setLoading(true);
 
     // Validate input before creating user
@@ -191,17 +191,28 @@ const SignUp = () => {
       return;
     }
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email.trim(), password)
-      .then(() => {
-        setLoading(false);
-        navigation.navigate("CreateProfile");
-      })
-      .catch((error) => {
-        setLoading(false);
-        setErrorMessage(error.message);
-      });
+    try {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email.trim(), password);
+      setLoading(false);
+      navigation.navigate("CreateProfile");
+    } catch (error) {
+      setLoading(false);
+      // Depending on the error, you can display different messages to the user
+      if (error.code === "auth/email-already-in-use") {
+        setErrorMessage("Email is already in use. Please try another one.");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMessage("Invalid email. Please check your input.");
+      } else if (error.code === "auth/weak-password") {
+        setErrorMessage(
+          "Password is too weak. Please use a stronger password."
+        );
+      } else {
+        setErrorMessage("An error occurred during sign up. Please try again.");
+      }
+      console.error(error);
+    }
   };
 
   // Function to monitor the user's authentication state
