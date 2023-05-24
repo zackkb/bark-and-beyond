@@ -234,7 +234,11 @@ const Login = () => {
       <Text style={styles.header}>Log In</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          accessibilityLabel="Loading"
+        />
       ) : (
         <View style={styles.backGreen}>
           <InputField
@@ -246,6 +250,7 @@ const Login = () => {
             onBlur={handleEmailBlur}
             status={emailFocus ? "" : emailStatus}
             active={emailFocus}
+            editable={!loading}
           />
           {emailError && <ErrorText error={emailError} />}
           <InputField
@@ -259,6 +264,7 @@ const Login = () => {
             onBlur={handlePasswordBlur}
             status={passwordFocus ? "" : passwordStatus}
             active={passwordFocus}
+            editable={!loading}
           />
           {passwordError && <ErrorText error={passwordError} />}
 
@@ -272,7 +278,8 @@ const Login = () => {
               isButtonDisabled && styles.disabledButton,
             ]}
             onPress={handleLogin}
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || loading}
+            accessibilityLabel="Login button"
           >
             <Text
               style={[
@@ -289,14 +296,23 @@ const Login = () => {
           <SocialButton
             logo={require("../assets/gmail_logo.png")}
             text="Continue with Gmail"
+            //onPress={() => {}}
+            disabled={loading}
+            accessibilityLabel="Google login button"
           />
           <SocialButton
             logo={require("../assets/apple_logo.png")}
             text="Continue with Apple"
+            //onPress={() => {}}
+            disabled={loading}
+            accessibilityLabel="Facebook login button"
           />
           <SocialButton
             logo={require("../assets/facebook_logo.png")}
             text="Continue with Facebook"
+            //onPress={() => {}}
+            disabled={loading}
+            accessibilityLabel="Facebook login button"
           />
         </View>
       )}
