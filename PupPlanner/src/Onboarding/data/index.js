@@ -22,7 +22,7 @@ export default [
   },
   {
     id: 4,
-    img: require("../assets/logo-with-tag.png"),
+    img: require("../assets/new-logo.png"),
   },
 ];
 /*

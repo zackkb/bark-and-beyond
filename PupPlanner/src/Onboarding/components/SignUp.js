@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -5,203 +6,434 @@ import {
   TextInput,
   SafeAreaView,
   TouchableOpacity,
+  Image,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { firebase } from "../../../Firebase/firebase";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+// This function checks if the input string is a valid email address
+const isEmailValid = (value) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(value.trim());
+};
 
-  function emailChange(value) {
-    setEmail(value);
+// This function checks if the input string is a valid password (at least 6 characters long)
+const isPasswordValid = (value) => value.length >= 6;
+
+// Error messages associated with email and password validation
+const errorMessages = {
+  isEmailValid: "Please enter a valid email address.",
+  isPasswordValid: "Please enter a password with at least 6 characters.",
+};
+
+// This function validates the input and sets error and status based on the result
+const validateInput = (value, validationFn, setError, setStatus) => {
+  if (!validationFn(value)) {
+    setError(errorMessages[validationFn.name]);
+    setStatus("error");
+  } else {
+    setError("");
+    setStatus("valid");
   }
+};
 
-  function validateEmail(email) {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  }
-
-  function passwordChange(value) {
-    setPassword(value);
-    if (value.length < 6) {
-      setErrorMessage("Password must be at least 6 characters long.");
-    } else {
-      setErrorMessage("");
-    }
-  }
-
-  function createUser() {
-    if (password.length < 6) {
-      setErrorMessage("Password must be at least 6 characters long.");
-    } else if (!validateEmail(email)) {
-      setErrorMessage("Please enter a valid email address.");
-    } else {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {})
-        .catch((error) => {
-          setErrorMessage(error.message);
-        });
-    }
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Sign Up</Text>
-
+// A reusable InputField component
+const InputField = ({
+  value,
+  onChangeText,
+  label,
+  placeholder,
+  secureTextEntry = false,
+  toggleSecureEntry,
+  status,
+  onFocus,
+  onBlur,
+  errorMessage,
+  active,
+}) => (
+  <View style={styles.inputContainer}>
+    <Text style={styles.inputLabel}>{label}</Text>
+    <View
+      style={[
+        styles.inputWrapper,
+        active ? styles.active : null,
+        status === "valid"
+          ? styles.valid
+          : status === "error"
+          ? styles.error
+          : null,
+      ]}
+    >
       <TextInput
-        onChangeText={emailChange}
-        value={email}
-        style={styles.email}
-        placeholder="Enter your email address"
+        onChangeText={onChangeText}
+        value={value}
+        style={styles.input}
+        placeholder={placeholder}
         placeholderTextColor="#000"
+        secureTextEntry={secureTextEntry}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        selectionColor="#000"
       />
-      <TextInput
-        onChangeText={passwordChange}
-        value={password}
-        style={styles.password}
-        placeholder="Enter your password"
-        placeholderTextColor="#000"
-        secureTextEntry={true}
-      />
-      {errorMessage !== "" && (
+      {status === "valid" && (
+        <Icon name="check-circle-o" size={20} color="green" />
+      )}
+      {status === "error" && <Icon name="ban" size={20} color="red" />}
+      {toggleSecureEntry && (
+        <TouchableOpacity style={styles.icon} onPress={toggleSecureEntry}>
+          <MaterialCommunityIcons
+            name={secureTextEntry ? "eye-off" : "eye"}
+            color="gray"
+            size={20}
+          />
+        </TouchableOpacity>
+      )}
+      {status === "error" && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       )}
-      <View style={styles.lineBreak}></View>
-
-      <TouchableOpacity
-        style={styles.continueButton}
-        //onPress={() => console.log(firebase)}
-        onPress={createUser}
-        //onPress={() => console.log(email, password)}
-      >
-        <Text style={styles.continueText}>Continue</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.gmailButton}>
-        <Text style={styles.externalText}>Continue with Gmail</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.appleButton}>
-        <Text style={styles.externalText}>Continue with Apple</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.facebookButton}>
-        <Text style={styles.externalText}>Continue with Facebook</Text>
-      </TouchableOpacity>
     </View>
+    {status === "error" && <Text style={styles.error}>{errorMessage}</Text>}
+  </View>
+);
+
+// Component for rendering error text
+const ErrorText = ({ error }) => <Text style={styles.error}>{error}</Text>;
+
+// Component for rendering social buttons
+const SocialButton = ({ logo, text }) => (
+  <TouchableOpacity style={[styles.button, styles.socialButton]}>
+    <View style={styles.buttonContent}>
+      <View style={styles.logoContainer}>
+        <Image source={logo} style={styles.logo} />
+      </View>
+      <Text style={styles.buttonSocialText}>{text}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+// The main SignUp component
+const SignUp = () => {
+  // State variables defined using useState
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [secureEntry, setSecureEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const [emailStatus, setEmailStatus] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState("");
+  const [emailFocus, setEmailFocus] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
+
+  // Event handlers
+  const handleEmailChange = (value) => {
+    setEmail(value);
+    if (!emailFocus) {
+      validateInput(value, isEmailValid, setEmailError, setEmailStatus);
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setEmailFocus(false);
+
+    // Trim the email input when the user finishes typing
+    const trimmedEmail = email.trim();
+    setEmail(trimmedEmail);
+
+    validateInput(trimmedEmail, isEmailValid, setEmailError, setEmailStatus);
+  };
+
+  const handleEmailFocus = () => {
+    setEmailFocus(true);
+    setEmailStatus("");
+  };
+
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+    if (!passwordFocus) {
+      validateInput(
+        value,
+        isPasswordValid,
+        setPasswordError,
+        setPasswordStatus
+      );
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    setPasswordFocus(false);
+    validateInput(
+      password,
+      isPasswordValid,
+      setPasswordError,
+      setPasswordStatus
+    );
+  };
+
+  const handlePasswordFocus = () => {
+    setPasswordFocus(true);
+    setPasswordStatus("");
+  };
+
+  // Function to handle user creation in Firebase
+  const handleCreateUser = async () => {
+    setLoading(true);
+
+    // Validate input before creating user
+    if (!isEmailValid(email) || !isPasswordValid(password)) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email.trim(), password);
+      setLoading(false);
+      navigation.navigate("CreateProfile");
+    } catch (error) {
+      setLoading(false);
+      // Depending on the error, you can display different messages to the user
+      if (error.code === "auth/email-already-in-use") {
+        setErrorMessage("Email is already in use. Please try another one.");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMessage("Invalid email. Please check your input.");
+      } else if (error.code === "auth/weak-password") {
+        setErrorMessage(
+          "Password is too weak. Please use a stronger password."
+        );
+      } else {
+        setErrorMessage("An error occurred during sign up. Please try again.");
+      }
+      console.error(error);
+    }
+  };
+
+  // Function to monitor the user's authentication state
+  useEffect(() => {
+    const monitorAuthState = () => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          console.log(user);
+        } else {
+          console.log("You're not logged in");
+        }
+      });
+    };
+    monitorAuthState();
+  }, []);
+
+  // Disable button if email or password is invalid
+  const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
+
+  // The render function
+  return (
+    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>Sign Up</Text>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <View style={styles.backGreen}>
+          <InputField
+            label="Email"
+            placeholder="Enter your email address"
+            value={email}
+            onChangeText={handleEmailChange}
+            onFocus={handleEmailFocus}
+            onBlur={handleEmailBlur}
+            status={emailFocus ? "" : emailStatus}
+            active={emailFocus}
+          />
+          {emailError && <ErrorText error={emailError} />}
+          <InputField
+            label="Password"
+            placeholder="Enter your password"
+            secureTextEntry={secureEntry}
+            toggleSecureEntry={() => setSecureEntry(!secureEntry)}
+            value={password}
+            onChangeText={handlePasswordChange}
+            onFocus={handlePasswordFocus}
+            onBlur={handlePasswordBlur}
+            status={passwordFocus ? "" : passwordStatus}
+            active={passwordFocus}
+          />
+          {passwordError && <ErrorText error={passwordError} />}
+
+          {errorMessage && (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          )}
+
+          <TouchableOpacity
+            style={[
+              styles.continueButton,
+              isButtonDisabled && styles.disabledButton,
+            ]}
+            onPress={handleCreateUser}
+            disabled={isButtonDisabled}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                isButtonDisabled && styles.disabledButtonText,
+              ]}
+            >
+              Continue
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.lineBreak}></View>
+
+          <SocialButton
+            logo={require("../assets/gmail_logo.png")}
+            text="Continue with Gmail"
+          />
+          <SocialButton
+            logo={require("../assets/apple_logo.png")}
+            text="Continue with Apple"
+          />
+          <SocialButton
+            logo={require("../assets/facebook_logo.png")}
+            text="Continue with Facebook"
+          />
+        </View>
+      )}
+    </KeyboardAwareScrollView>
   );
 };
 
 export default SignUp;
 
 const styles = StyleSheet.create({
-  header: {
-    //  fontFamily: "poppins",
-    fontSize: 50,
-    fontWeight: 700,
-    lineHeight: 75,
-    marginTop: 106,
-    textAlign: "center",
-  },
   container: {
     alignItems: "center",
-    // backgroundColor: "#B8DFA9",
+    justifyContent: "space-around",
+    width: "100%",
   },
-  email: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    fontSize: 16,
+  header: {
+    fontSize: 50,
     fontWeight: "bold",
-    padding: 0,
-    gap: 6,
-    position: "absolute",
-    width: 345,
-    height: 48,
+    color: "black",
+    textAlign: "center",
+    marginTop: 106,
+  },
+  backGreen: {
+    width: "100%",
+    backgroundColor: "#B8DFA9",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    alignItems: "center",
+    paddingTop: 49,
+  },
+  inputContainer: {
+    width: "90%",
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderRadius: 10,
-    marginTop: 252,
-    paddingLeft: 15,
-    color: "#333",
+    padding: 12,
+    backgroundColor: "#FFF",
+    position: "relative",
   },
-  password: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
+  inputLabel: {
+    fontSize: 16,
+    marginBottom: 6,
+    fontWeight: "bold",
+    marginTop: 24,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
     fontWeight: "bold",
-    padding: 0,
-    gap: 6,
-    position: "absolute",
-    width: 345,
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 10,
-    marginTop: 364,
-    paddingLeft: 15,
-    color: "#333",
+  },
+  icon: {
+    marginLeft: 10,
   },
   lineBreak: {
-    position: "absolute",
-    width: 327,
-    height: 0,
-    borderWidth: 1,
-    borderColor: "black",
-    left: 41,
-    top: 550,
+    height: 1,
+    backgroundColor: "black",
+    width: "90%",
+    marginVertical: 48,
   },
   continueButton: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    position: "absolute",
-    width: 183,
-    height: 48,
-    top: 480,
     backgroundColor: "#323841",
+    height: 48,
+    width: "45%",
     borderRadius: 30,
+    justifyContent: "center",
+    alignSelf: "center",
+    alignItems: "center",
+    marginTop: 38,
   },
-  continueText: {
+  disabledButton: {
+    backgroundColor: "gray",
+  },
+  disabledButtonText: {
+    color: "#CCC",
+  },
+  buttonText: {
     color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
   },
-  gmailButton: {
-    position: "absolute",
-    width: 345,
-    height: 48,
-    top: 624,
-    alignItems: "center",
-    justifyContent: "center",
+  socialButton: {
+    backgroundColor: "#FFF",
     borderWidth: 1,
-    borderRadius: 30,
-  },
-  appleButton: {
-    position: "absolute",
-    width: 345,
+    borderColor: "#323841",
+    width: "90%",
     height: 48,
-    top: 688,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
     borderRadius: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingLeft: 15,
+    marginVertical: 8,
   },
-  facebookButton: {
+  buttonContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  logo: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  logoContainer: {
     position: "absolute",
-    width: 345,
-    height: 48,
-    top: 752,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderRadius: 30,
+    left: 15,
   },
-  externalText: {
+  buttonSocialText: {
+    color: "#000",
     fontSize: 16,
     fontWeight: "bold",
+    marginLeft: 10,
+  },
+  errorMessage: {
+    position: "absolute",
+    color: "red",
+    fontSize: 12,
+    bottom: -20,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+  },
+  valid: {
+    borderColor: "green",
+  },
+  error: {
+    borderColor: "red",
+  },
+  active: {
+    borderColor: "#88C6E7",
   },
 });

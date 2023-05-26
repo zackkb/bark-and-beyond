@@ -43,7 +43,11 @@ const Slider = () => {
       <FlatList
         data={Slides}
         renderItem={({ item, index }) => (
-          <SlideItem item={item} index={index} lastIndex={lastIndex} />
+          <SlideItem
+            item={item}
+            index={index}
+            lastIndex={lastIndex}
+          />
         )}
         horizontal
         pagingEnabled
@@ -53,7 +57,11 @@ const Slider = () => {
         viewabilityConfig={viewabilityConfig}
       />
 
-      <Pagination data={Slides} scrollX={scrollX} index={index} />
+      <Pagination
+        data={Slides}
+        scrollX={scrollX}
+        index={index}
+      />
     </View>
   );
 };

@@ -60,12 +60,12 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 0.5,
-    width: "100%",
+    width: "85%",
     marginTop: 202,
   },
   content: {
     flex: 0.4,
-    width: 295,
+    width: "100%",
     height: 139,
     alignItems: "center",
   },
@@ -73,12 +73,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#000",
-    marginBottom: 10,
+    marginBottom: 15,
+    marginTop: 20,
   },
   description: {
     fontSize: 16,
     fontWeight: 400,
     lineHeight: 19.36,
+    width: "64%",
     color: "#000",
     textAlign: "center",
     flexWrap: "wrap",
@@ -86,21 +88,22 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     marginTop: 20,
     alignItems: "center",
+    width: "100%",
   },
 
   signupButton: {
     height: 48,
-    width: 345,
+    width: "84%",
     borderRadius: 30,
     padding: 12,
     backgroundColor: "#323841",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: -10,
   },
-
   loginButton: {
     height: 48,
-    width: 345,
+    width: "84%",
     borderRadius: 30,
     padding: 12,
     backgroundColor: "#FFF",
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 16,
   },
 
   buttonText: {
