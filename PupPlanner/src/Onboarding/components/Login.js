@@ -196,6 +196,9 @@ const Login = () => {
       return;
     }
 
+    /* 
+    // temporarily disabling login to do some work on Dashboard.js
+
     firebase
       .auth()
       .signInWithEmailAndPassword(trimmedEmail, password)
@@ -223,6 +226,11 @@ const Login = () => {
         setErrorMessage(errorMsg);
         console.error(error);
       });
+  }, [email, password]);
+
+  */
+    //remove this underneath after allowing login agin
+    navigation.navigate("Dashboard");
   }, [email, password]);
 
   // Disable button if email or password is invalid

@@ -41,6 +41,7 @@ const CreateProfile = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const humanRef = firebase.firestore().collection("humanProfiles");
 
   const navigation = useNavigation();
@@ -62,6 +63,44 @@ const CreateProfile = () => {
         setImage(result.assets[0].uri);
       }
     }
+  };
+
+  const uploadImage = async () => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function () {
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    });
+    const ref = firebase.storage().ref().child(`Pictures/Image1`);
+    const snapshot = ref.put(blob);
+    snapshot.on(
+      firebase.storage.TaskEvent.STATE_CHANGED,
+      () => {
+        setUploading(true);
+      },
+      (error) => {
+        setUploading(false);
+        console.log(error);
+        blob.close();
+        return;
+      },
+      () => {
+        snapshot.snapshot.ref.getDownloadURL().then((url) => {
+          setUploading(false);
+          console.log("Download URL: ", url);
+          setImage(url);
+          blob.close();
+          return url;
+        });
+      }
+    );
   };
 
   const handleNameChange = (value) => {
@@ -93,6 +132,7 @@ const CreateProfile = () => {
 
   const createAndMoveScreens = () => {
     addHuman();
+    uploadImage();
     navigation.navigate("CreateDogProfile");
   };
 
@@ -101,10 +141,7 @@ const CreateProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity
-          style={styles.photoButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
           {!image && (
             <Image
               style={styles.photoImage}
@@ -137,6 +174,10 @@ const CreateProfile = () => {
           onPress={createAndMoveScreens}
         >
           <Text style={styles.continueText}>Continue</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={uploadImage}>
+          <Text style={styles.goBack}>Send to Firebase</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>

@@ -13,6 +13,8 @@ import Login from "./src/Onboarding/components/Login";
 import CreateProfile from "./src/Onboarding/components/CreateProfile";
 import CreateDogProfile from "./src/Onboarding/components/CreateDogProfile";
 
+import Dashboard from "./src/Dashboard/components/Dashboard";
+
 // keep or remove this?
 /* import { enableScreens } from "react-native-screens";
 enableScreens(); */
@@ -28,26 +30,12 @@ const App = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen
-          name="Slider"
-          component={Slider}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-        />
-        <Stack.Screen
-          name="CreateProfile"
-          component={CreateProfile}
-        />
-        <Stack.Screen
-          name="CreateDogProfile"
-          component={CreateDogProfile}
-        />
+        <Stack.Screen name="Slider" component={Slider} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="CreateProfile" component={CreateProfile} />
+        <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
       </Stack.Navigator>
     </NavigationContainer>
   );
