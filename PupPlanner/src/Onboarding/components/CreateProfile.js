@@ -87,11 +87,11 @@ const CreateProfile = () => {
       console.log("Converted to blob");
 
       console.log("Getting reference to Firebase storage");
-      const ref = storage().ref().child(`Pictures/Image1`);
+      const ref = firebase.storage().ref().child(`Pictures/Image1`);
       console.log("Got reference to Firebase storage");
 
       console.log("Putting blob in Firebase storage");
-      const snapshot = await ref.putFile(image);
+      const snapshot = await ref.put(blob);
       console.log("Put blob in Firebase storage");
 
       console.log("Getting download URL");
@@ -150,10 +150,7 @@ const CreateProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity
-          style={styles.photoButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
           {image ? (
             <Image
               source={{ uri: image }}
