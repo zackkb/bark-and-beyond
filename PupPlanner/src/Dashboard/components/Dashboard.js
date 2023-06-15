@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import NavBar from "../../NavBar";
+import { UserContext } from "../../../UserContext";
 
-const Dashboard = ({ user, navigation }) => {
+const Dashboard = ({ navigation, route }) => {
+  const user = useContext(UserContext);
+
+  const displayName = route.params?.displayName;
+  let welcomeMessage = `Welcome Back, ${displayName ? displayName : "Guest"}`;
+
   return (
     <View style={styles.dashboard}>
       <NavBar navigation={navigation} />
-      <Text style={styles.welcomeText}>Welcome back</Text>
+
+      <Text style={styles.welcomeText}>{welcomeMessage}</Text>
     </View>
   );
 };

@@ -196,15 +196,20 @@ const Login = () => {
       return;
     }
 
-    /* 
-    // temporarily disabling login to do some work on Dashboard.js
-
     firebase
       .auth()
       .signInWithEmailAndPassword(trimmedEmail, password)
       .then(() => {
         setLoading(false);
-        navigation.navigate("Dashboard"); // Navigate to main screen here
+
+        // get the user's display name
+        const user = firebase.auth().currentUser;
+        const name = user ? user.displayName : null;
+
+        // navigate to the dashboard with the display name as a parameter
+        navigation.navigate("Dashboard", {
+          displayName: user ? user.displayName : null,
+        });
       })
       .catch((error) => {
         setLoading(false);
@@ -226,12 +231,7 @@ const Login = () => {
         setErrorMessage(errorMsg);
         console.error(error);
       });
-  }, [email, password]);
-
-  */
-    //remove this underneath after allowing login agin
-    navigation.navigate("Dashboard");
-  }, [email, password]);
+  }, [email, password, navigation]);
 
   // Disable button if email or password is invalid
   const isButtonDisabled = !isEmailValid(email) || !isPasswordValid(password);
