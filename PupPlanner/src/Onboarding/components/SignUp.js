@@ -80,11 +80,24 @@ const InputField = ({
         selectionColor="#000"
       />
       {status === "valid" && (
-        <Icon name="check-circle-o" size={20} color="green" />
+        <Icon
+          name="check-circle-o"
+          size={20}
+          color="green"
+        />
       )}
-      {status === "error" && <Icon name="ban" size={20} color="red" />}
+      {status === "error" && (
+        <Icon
+          name="ban"
+          size={20}
+          color="red"
+        />
+      )}
       {toggleSecureEntry && (
-        <TouchableOpacity style={styles.icon} onPress={toggleSecureEntry}>
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={toggleSecureEntry}
+        >
           <MaterialCommunityIcons
             name={secureTextEntry ? "eye-off" : "eye"}
             color="gray"
@@ -108,7 +121,10 @@ const SocialButton = ({ logo, text }) => (
   <TouchableOpacity style={[styles.button, styles.socialButton]}>
     <View style={styles.buttonContent}>
       <View style={styles.logoContainer}>
-        <Image source={logo} style={styles.logo} />
+        <Image
+          source={logo}
+          style={styles.logo}
+        />
       </View>
       <Text style={styles.buttonSocialText}>{text}</Text>
     </View>
@@ -192,25 +208,29 @@ const SignUp = () => {
     }
 
     try {
-      await firebase
+      const userCredential = await firebase
         .auth()
         .createUserWithEmailAndPassword(email.trim(), password);
+      const user = userCredential.user;
+
+      // Obtain the user ID
+      const userId = user.uid;
+
+      // Create a Firestore reference to the "users" collection
+      const db = firebase.firestore();
+      const usersCollection = db.collection("users");
+
+      // Store the user's email and password in the collection
+      await usersCollection.doc(userId).set({
+        email: email,
+        password: password,
+      });
+
       setLoading(false);
       navigation.navigate("CreateProfile");
     } catch (error) {
       setLoading(false);
-      // Depending on the error, you can display different messages to the user
-      if (error.code === "auth/email-already-in-use") {
-        setErrorMessage("Email is already in use. Please try another one.");
-      } else if (error.code === "auth/invalid-email") {
-        setErrorMessage("Invalid email. Please check your input.");
-      } else if (error.code === "auth/weak-password") {
-        setErrorMessage(
-          "Password is too weak. Please use a stronger password."
-        );
-      } else {
-        setErrorMessage("An error occurred during sign up. Please try again.");
-      }
+      // Handle the error
       console.error(error);
     }
   };
@@ -238,7 +258,10 @@ const SignUp = () => {
       <Text style={styles.header}>Sign Up</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+        />
       ) : (
         <View style={styles.backGreen}>
           <InputField

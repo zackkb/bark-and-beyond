@@ -10,21 +10,12 @@ import {
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
-import { utils } from "@react-native-firebase/app";
-import { connectActionSheet } from "@expo/react-native-action-sheet";
-
-import { Platform } from "react-native";
-import * as FileSystem from "expo-file-system";
-
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { firebase } from "../../../Firebase/firebase";
 import "firebase/storage";
 import "firebase/firestore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import storage from "@react-native-firebase/storage";
 
 const InputField = ({
   value,
@@ -69,8 +60,8 @@ const CreateProfile = () => {
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImage(result.uri);
+    if (!result.cancelled) {
+      setImage(result.assets[0].uri);
     }
   };
 
@@ -78,25 +69,15 @@ const CreateProfile = () => {
     try {
       if (!image) return null;
 
-      console.log("Fetching the image");
       const response = await fetch(image);
-      console.log("Image fetched");
-
-      console.log("Converting response to blob");
       const blob = await response.blob();
-      console.log("Converted to blob");
 
-      console.log("Getting reference to Firebase storage");
-      const ref = firebase.storage().ref().child(`Pictures/Image1`);
-      console.log("Got reference to Firebase storage");
+      const timestamp = Date.now();
+      const filename = `Image${timestamp}`;
+      const ref = firebase.storage().ref().child(`humanPictures/${filename}`);
 
-      console.log("Putting blob in Firebase storage");
       const snapshot = await ref.put(blob);
-      console.log("Put blob in Firebase storage");
-
-      console.log("Getting download URL");
       const downloadUrl = await snapshot.ref.getDownloadURL();
-      console.log("Got download URL");
 
       return downloadUrl;
     } catch (error) {
@@ -121,28 +102,43 @@ const CreateProfile = () => {
       return;
     }
 
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const data = {
-      ownerName: name,
-      phoneNumber: phone,
-      createdAt: timestamp,
-      imageURL: imageUrl,
-    };
-    humanRef
-      .add(data)
-      .then(() => {
-        setName("");
-        setPhone("");
-        setImage(null);
-      })
-      .catch((error) => {
-        alert(error);
-      });
+    const user = firebase.auth().currentUser;
+
+    if (user) {
+      const documentRef = firebase
+        .firestore()
+        .collection("usersCollection")
+        .doc(user.uid);
+      const documentSnapshot = await documentRef.get();
+
+      if (documentSnapshot.exists) {
+        await documentRef.update({
+          displayName: name,
+        });
+      } else {
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+          ownerName: name,
+          phoneNumber: phone,
+          createdAt: timestamp,
+          imageURL: imageUrl,
+          displayName: name,
+        };
+        await documentRef.set(data);
+      }
+
+      setName("");
+      setPhone("");
+      setImage(null);
+    } else {
+      console.log("User not found");
+      return;
+    }
   };
 
   const createAndMoveScreens = async () => {
     await addHuman();
-    navigation.navigate("CreateDogProfile");
+    navigation.navigate("CreateDogProfile", { displayName: name });
   };
 
   return (
@@ -186,19 +182,13 @@ const CreateProfile = () => {
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={uploadImage}>
-          <Text style={styles.goBack}>Send to Firebase</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-          <Text style={styles.goBack}>Go Back</Text>
+          <Text style={styles.cancel}>Cancel</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 };
-
-export default CreateProfile;
 
 const styles = StyleSheet.create({
   container: {
@@ -259,6 +249,9 @@ const styles = StyleSheet.create({
   },
   cancel: {
     fontSize: 16,
+    fontWeight: "700",
+    marginTop: 24,
+    marginBottom: 100,
   },
   photoButton: {
     height: 144,
@@ -266,10 +259,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
     alignContent: "center",
   },
-  goBack: {
-    fontWeight: "700",
-    fontSize: 16,
-    marginTop: 24,
-    marginBottom: 70,
-  },
 });
+
+export default CreateProfile;

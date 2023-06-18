@@ -80,11 +80,24 @@ const InputField = ({
         selectionColor="#000"
       />
       {status === "valid" && (
-        <Icon name="check-circle-o" size={20} color="green" />
+        <Icon
+          name="check-circle-o"
+          size={20}
+          color="green"
+        />
       )}
-      {status === "error" && <Icon name="ban" size={20} color="red" />}
+      {status === "error" && (
+        <Icon
+          name="ban"
+          size={20}
+          color="red"
+        />
+      )}
       {toggleSecureEntry && (
-        <TouchableOpacity style={styles.icon} onPress={toggleSecureEntry}>
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={toggleSecureEntry}
+        >
           <MaterialCommunityIcons
             name={secureTextEntry ? "eye-off" : "eye"}
             color="gray"
@@ -108,7 +121,10 @@ const SocialButton = ({ logo, text }) => (
   <TouchableOpacity style={[styles.button, styles.socialButton]}>
     <View style={styles.buttonContent}>
       <View style={styles.logoContainer}>
-        <Image source={logo} style={styles.logo} />
+        <Image
+          source={logo}
+          style={styles.logo}
+        />
       </View>
       <Text style={styles.buttonSocialText}>{text}</Text>
     </View>
@@ -196,15 +212,34 @@ const Login = () => {
       return;
     }
 
-    /* 
-    // temporarily disabling login to do some work on Dashboard.js
-
     firebase
       .auth()
       .signInWithEmailAndPassword(trimmedEmail, password)
       .then(() => {
         setLoading(false);
-        navigation.navigate("Dashboard"); // Navigate to main screen here
+        firebase
+          .firestore()
+          .collection("dogProfiles")
+          .where("email", "==", trimmedEmail)
+          .get()
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              const doc = querySnapshot.docs[0];
+              const data = doc.data();
+              const petName = data.petName; // Get the petName field from the document
+              navigation.navigate("Dashboard", {
+                email: trimmedEmail,
+                petName: petName,
+              }); // Pass the petName as a parameter tcd pupo the Dashboard screen
+            } else {
+              console.log("Dog profile not found for the user.");
+              navigation.navigate("Dashboard", { email: trimmedEmail });
+            }
+          })
+          .catch((error) => {
+            console.error("Error retrieving dog profile:", error);
+            navigation.navigate("Dashboard", { email: trimmedEmail });
+          });
       })
       .catch((error) => {
         setLoading(false);
@@ -226,11 +261,8 @@ const Login = () => {
         setErrorMessage(errorMsg);
         console.error(error);
       });
-  }, [email, password]);
-
-  */
-    //remove this underneath after allowing login agin
-    navigation.navigate("Dashboard");
+    console.log(trimmedEmail);
+    //  console.log(petName);
   }, [email, password]);
 
   // Disable button if email or password is invalid
