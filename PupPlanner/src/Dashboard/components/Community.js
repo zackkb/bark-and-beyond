@@ -6,6 +6,7 @@ import NavBar from "../../NavBar";
 
 const Community = ({ navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState("Network");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -16,9 +17,36 @@ const Community = ({ navigation }) => {
       <NavBar navigation={navigation} />
 
       <View style={styles.navbar}>
-        <Text style={styles.navText}>Network</Text>
-        <Text style={styles.navText}>Play Date</Text>
-        <Text style={styles.navText}>Chatboard</Text>
+        <TouchableOpacity onPress={() => setActiveTab("Network")}>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === "Network" && styles.activeTabStyle,
+            ]}
+          >
+            Network
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab("Play Date")}>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === "Play Date" && styles.activeTabStyle,
+            ]}
+          >
+            Play Date
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab("Chatboard")}>
+          <Text
+            style={[
+              styles.navText,
+              activeTab === "Chatboard" && styles.activeTabStyle,
+            ]}
+          >
+            Chatboard
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.title}>
@@ -64,6 +92,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter",
     fontWeight: "400",
+  },
+  activeTabStyle: {
+    textDecorationLine: "underline",
   },
   title: {
     fontSize: 24,
