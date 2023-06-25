@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const DropdownMenu = ({ navigation }) => {
+const DropdownMenu = ({ navigation, closeMenu }) => {
   const menuItems = [
     "Dashboard",
     "Community",
@@ -22,6 +29,11 @@ const DropdownMenu = ({ navigation }) => {
     setHighlightedItem(null);
   };
 
+  const handleItemPress = (item) => {
+    navigation.navigate(item);
+    closeMenu(); // close the menu when an item is clicked
+  };
+
   return (
     <View style={styles.dropdownMenu}>
       {menuItems.map((item, index) => (
@@ -31,7 +43,7 @@ const DropdownMenu = ({ navigation }) => {
             styles.menuItem,
             index === highlightedItem && styles.highlightedItem,
           ]}
-          onPress={() => navigation.navigate(item)}
+          onPress={() => handleItemPress(item)}
           onPressIn={() => handlePressIn(index)}
           onPressOut={handlePressOut}
         >
@@ -64,31 +76,31 @@ const NavBar = ({ navigation }) => {
     setIsMenuVisible(!isMenuVisible);
   };
 
+  const closeMenu = () => {
+    setIsMenuVisible(false);
+  };
+
   const handleDogIconClick = () => {
     navigation.navigate("Dashboard");
   };
 
   return (
-    <View style={styles.navbar}>
-      <TouchableOpacity onPress={handleMenuClick}>
-        <MaterialIcons
-          name="menu"
-          size={24}
-          color="black"
-        />
-      </TouchableOpacity>
-      {isMenuVisible && <DropdownMenu navigation={navigation} />}
-      <TouchableOpacity onPress={handleDogIconClick}>
-        <Image source={require("../assets/gray_logo.png")} />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-        <MaterialIcons
-          name="search"
-          size={24}
-          color="black"
-        />
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={closeMenu}>
+      <View style={styles.navbar}>
+        <TouchableOpacity onPress={handleMenuClick}>
+          <MaterialIcons name="menu" size={24} color="black" />
+        </TouchableOpacity>
+        {isMenuVisible && (
+          <DropdownMenu navigation={navigation} closeMenu={closeMenu} />
+        )}
+        <TouchableOpacity onPress={handleDogIconClick}>
+          <Image source={require("../assets/gray_logo.png")} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+          <MaterialIcons name="search" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
