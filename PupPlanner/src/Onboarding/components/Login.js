@@ -162,7 +162,7 @@ const Login = () => {
     setEmailFocus(false);
 
     // Trim the email input when the user finishes typing
-    const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim().toLowerCase();
     setEmail(trimmedEmail);
 
     validateInput(trimmedEmail, isEmailValid, setEmailError, setEmailStatus);

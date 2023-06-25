@@ -61,7 +61,7 @@ const CreateProfile = () => {
     });
 
     if (!result.cancelled) {
-      setImage(result.assets[0].uri);
+      setImage(result.uri);
     }
   };
 
@@ -73,7 +73,7 @@ const CreateProfile = () => {
       const blob = await response.blob();
 
       const timestamp = Date.now();
-      const filename = `Image${timestamp}`;
+      const filename = `Image${timestamp};`;
       const ref = firebase.storage().ref().child(`humanPictures/${filename}`);
 
       const snapshot = await ref.put(blob);
@@ -107,7 +107,7 @@ const CreateProfile = () => {
     if (user) {
       const documentRef = firebase
         .firestore()
-        .collection("usersCollection")
+        .collection("humanProfiles")
         .doc(user.uid);
       const documentSnapshot = await documentRef.get();
 
@@ -146,7 +146,10 @@ const CreateProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={pickImage}
+        >
           {image ? (
             <Image
               source={{ uri: image }}
@@ -189,6 +192,8 @@ const CreateProfile = () => {
     </KeyboardAwareScrollView>
   );
 };
+
+export default CreateProfile;
 
 const styles = StyleSheet.create({
   container: {
@@ -260,5 +265,3 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
 });
-
-export default CreateProfile;

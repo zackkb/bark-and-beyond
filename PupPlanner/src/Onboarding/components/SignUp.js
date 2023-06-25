@@ -159,7 +159,7 @@ const SignUp = () => {
     setEmailFocus(false);
 
     // Trim the email input when the user finishes typing
-    const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim().toLowerCase();
     setEmail(trimmedEmail);
 
     validateInput(trimmedEmail, isEmailValid, setEmailError, setEmailStatus);
@@ -210,7 +210,7 @@ const SignUp = () => {
     try {
       const userCredential = await firebase
         .auth()
-        .createUserWithEmailAndPassword(email.trim(), password);
+        .createUserWithEmailAndPassword(email.trim().toLowerCase(), password);
       const user = userCredential.user;
 
       // Obtain the user ID

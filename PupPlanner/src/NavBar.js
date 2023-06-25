@@ -71,14 +71,22 @@ const NavBar = ({ navigation }) => {
   return (
     <View style={styles.navbar}>
       <TouchableOpacity onPress={handleMenuClick}>
-        <MaterialIcons name="menu" size={24} color="black" />
+        <MaterialIcons
+          name="menu"
+          size={24}
+          color="black"
+        />
       </TouchableOpacity>
       {isMenuVisible && <DropdownMenu navigation={navigation} />}
       <TouchableOpacity onPress={handleDogIconClick}>
         <Image source={require("../assets/gray_logo.png")} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-        <MaterialIcons name="search" size={24} color="black" />
+        <MaterialIcons
+          name="search"
+          size={24}
+          color="black"
+        />
       </TouchableOpacity>
     </View>
   );
@@ -86,11 +94,12 @@ const NavBar = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   navbar: {
-    height: 100,
+    height: 129,
     backgroundColor: "#B8DFA9",
     paddingHorizontal: 15,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
+    paddingBottom: 15,
     justifyContent: "space-between",
     zIndex: 1,
   },

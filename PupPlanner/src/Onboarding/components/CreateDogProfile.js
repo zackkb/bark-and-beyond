@@ -76,8 +76,8 @@ const CreateDogProfile = () => {
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setImage(result.assets[0].uri);
+    if (!result.canceled) {
+      setImage(result.uri);
     }
   };
 
@@ -163,11 +163,18 @@ const CreateDogProfile = () => {
       });
   };
 
-  const createAndMoveToDashboard = () => {
-    addDog();
-    navigation.navigate("Dashboard");
-    console.log(name);
-    console.log(notes);
+  const createAndMoveToDashboard = async () => {
+    await addDog();
+
+    const email = firebase.auth().currentUser.email;
+    const docSnapshot = await dogRef.doc(email).get();
+    const dogProfileData = docSnapshot.data();
+    const petName = dogProfileData ? dogProfileData.petName : "";
+
+    navigation.navigate("Dashboard", {
+      email: email,
+      petName: petName,
+    });
   };
 
   return (
@@ -175,7 +182,10 @@ const CreateDogProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={pickImage}
+        >
           {image ? (
             <Image
               source={{ uri: image }}

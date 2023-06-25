@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, PanResponder } from "react-native";
+import { View, Text, StyleSheet, PanResponder, ScrollView } from "react-native";
 import NavBar from "../../NavBar";
+import Calendar from "./Calendar";
+import Notifications from "./Notifications";
+
 import { useNavigation } from "@react-navigation/native";
 
 import { firebase } from "../../../Firebase/firebase";
 
 const Dashboard = ({ route, navigation }) => {
   const [userEmail, setUserEmail] = useState("");
+  const [loading, setLoading] = useState(true);
   const { email } = route.params;
   let welcomeMessage = "";
 
@@ -23,7 +27,6 @@ const Dashboard = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // Fetch the dogProfile document matching the user's email
     const fetchDogProfile = async () => {
       try {
         const docSnapshot = await firebase
@@ -35,8 +38,10 @@ const Dashboard = ({ route, navigation }) => {
           const dogProfileData = docSnapshot.data();
           setDogProfile(dogProfileData);
         }
+        setLoading(false); // Set loading to false after fetching the data
       } catch (error) {
         console.error("Error fetching dogProfile:", error);
+        setLoading(false); // Set loading to false even if there's an error
       }
     };
 
@@ -62,16 +67,25 @@ const Dashboard = ({ route, navigation }) => {
     },
   });
 
+  if (loading) {
+    return (
+      <View style={styles.dashboard}>
+        <NavBar navigation={navigation} />
+        <Text style={styles.welcomeText}>Loading...</Text>
+      </View>
+    );
+  }
+
   if (dogProfile) {
-    welcomeMessage = `Welcome Back, ${
+    welcomeMessage = `Welcome back, \n${
       dogProfile.petName ? dogProfile.petName : userEmail
     }`;
   } else {
-    welcomeMessage = `Welcome Back, ${userEmail}`;
+    welcomeMessage = `Welcome back, \n${userEmail}`;
   }
 
   return (
-    <View style={styles.dashboard}>
+    <ScrollView style={styles.dashboard}>
       <NavBar navigation={navigation} />
       <View
         style={[
@@ -92,7 +106,9 @@ const Dashboard = ({ route, navigation }) => {
       >
         <Text style={styles.welcomeText}>{welcomeMessage}</Text>
       </View>
-    </View>
+      <Calendar />
+      <Notifications />
+    </ScrollView>
   );
 };
 
@@ -101,17 +117,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  welcomeTextContainer: {
-    marginTop: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
   welcomeText: {
-    fontSize: 28,
+    fontSize: 38,
+    fontWeight: 700,
+    height: 114,
+    marginTop: 32,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });
 

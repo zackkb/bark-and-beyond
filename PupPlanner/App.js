@@ -41,20 +41,47 @@ const App = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Slider" component={Slider} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="CreateProfile" component={CreateProfile} />
-        <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
+        <Stack.Screen
+          name="Slider"
+          component={Slider}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+        />
+        <Stack.Screen
+          name="CreateProfile"
+          component={CreateProfile}
+        />
+        <Stack.Screen
+          name="CreateDogProfile"
+          component={CreateDogProfile}
+        />
         <Stack.Screen
           name="Dashboard"
           component={Dashboard}
           initialParams={{ user }}
         />
-        <Stack.Screen name="Community" component={Community} />
-        <Stack.Screen name="Learning" component={Learning} />
-        <Stack.Screen name="Services" component={Services} />
-        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen
+          name="Community"
+          component={Community}
+        />
+        <Stack.Screen
+          name="Learning"
+          component={Learning}
+        />
+        <Stack.Screen
+          name="Services"
+          component={Services}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
