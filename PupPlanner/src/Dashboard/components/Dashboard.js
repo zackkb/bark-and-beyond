@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, PanResponder, ScrollView } from "react-native";
 import NavBar from "../../NavBar";
 import Calendar from "./Calendar";
+import Navigation from "./Navigation";
 import Notifications from "./Notifications";
 
 import { useNavigation } from "@react-navigation/native";
@@ -108,6 +109,7 @@ const Dashboard = ({ route, navigation }) => {
       </View>
       <Calendar />
       <Notifications />
+      <Navigation />
     </ScrollView>
   );
 };

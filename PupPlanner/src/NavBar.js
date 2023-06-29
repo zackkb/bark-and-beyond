@@ -88,16 +88,27 @@ const NavBar = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={closeMenu}>
       <View style={styles.navbar}>
         <TouchableOpacity onPress={handleMenuClick}>
-          <MaterialIcons name="menu" size={24} color="black" />
+          <MaterialIcons
+            name="menu"
+            size={24}
+            color="black"
+          />
         </TouchableOpacity>
         {isMenuVisible && (
-          <DropdownMenu navigation={navigation} closeMenu={closeMenu} />
+          <DropdownMenu
+            navigation={navigation}
+            closeMenu={closeMenu}
+          />
         )}
         <TouchableOpacity onPress={handleDogIconClick}>
           <Image source={require("../assets/gray_logo.png")} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <MaterialIcons name="search" size={24} color="black" />
+          <MaterialIcons
+            name="search"
+            size={24}
+            color="black"
+          />
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
