@@ -204,51 +204,43 @@ const Community = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.userCard}>
-        <Image source={require("../assets/network_dog_1.png")} />
-        <View style={{ flexDirection: "column" }}>
-          <View style={styles.textAndIconContainer}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={require("../assets/john.png")}
-                style={styles.userImage}
-              />
-              <Text style={styles.userName}>John</Text>
-            </View>
-            <View style={styles.formContainer}>
-              <View style={styles.textAndIconContainer}>
-                <Text>
-                  Cooper has been doing so well with his training! Celebrating
-                  with a puppucino!
-                </Text>
-                <TouchableOpacity>
-                  <Ionicons name="ios-create-outline" size={28} color="black" />
-                </TouchableOpacity>
-              </View>
-            </View>
+      <View style={styles.feedCard}>
+        <Image
+          source={require("../assets/network_dog_1.png")}
+          style={styles.feedImage}
+        />
+        <View style={styles.userInfoContainer}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/john.png")}
+              style={styles.userImage}
+            />
+            <Text style={styles.userName}>John</Text>
+          </View>
+          <View style={styles.feedFormContainer}>
+            <Text>
+              Cooper has been doing so well with his training! Celebrating with
+              a puppucino!
+            </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.userCard}>
-        <Image source={require("../assets/network_dog_2.png")} />
-        <View style={{ flexDirection: "column" }}>
-          <View style={styles.textAndIconContainer}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={require("../assets/sammy.png")}
-                style={styles.userImage}
-              />
-              <Text style={styles.userName}>Sammy</Text>
-            </View>
-            <View style={styles.formContainer}>
-              <View style={styles.textAndIconContainer}>
-                <Text>Weekly hike with my sweet bb</Text>
-                <TouchableOpacity>
-                  <Ionicons name="ios-create-outline" size={28} color="black" />
-                </TouchableOpacity>
-              </View>
-            </View>
+      <View style={styles.feedCard}>
+        <Image
+          source={require("../assets/network_dog_2.png")}
+          style={styles.feedImage}
+        />
+        <View style={styles.userInfoContainer}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/sammy.png")}
+              style={styles.userImage}
+            />
+            <Text style={styles.userName}>Sammy</Text>
+          </View>
+          <View style={styles.feedFormContainer}>
+            <Text>Weekly hike with my sweet bb {"<3"}</Text>
           </View>
         </View>
       </View>
@@ -348,6 +340,24 @@ const styles = StyleSheet.create({
     marginRight: 10,
     backgroundColor: "transparent",
     alignItems: "center",
+  },
+  feedCard: {
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  feedImage: {
+    width: "100%",
+    height: 200,
+    resizeMode: "cover",
+  },
+  userInfoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  feedFormContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   userImage: {
     width: 50,
