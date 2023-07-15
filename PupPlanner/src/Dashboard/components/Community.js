@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import Modal from "react-native-modal";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import NavBar from "../../NavBar";
-import { Dimensions } from "react-native";
+import ScreenWrapper from "../../ScreenWrapper";
 
 const Community = ({ navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -43,208 +43,225 @@ const Community = ({ navigation }) => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <NavBar navigation={navigation} />
-
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => setSelectedSection("Network")}>
-          <Text
-            style={
-              selectedSection === "Network"
-                ? styles.navTextSelected
-                : styles.navText
-            }
-          >
-            Network
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedSection("Play Date")}>
-          <Text
-            style={
-              selectedSection === "Play Date"
-                ? styles.navTextSelected
-                : styles.navText
-            }
-          >
-            Play Date
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedSection("Chatboard")}>
-          <Text
-            style={
-              selectedSection === "Chatboard"
-                ? styles.navTextSelected
-                : styles.navText
-            }
-          >
-            Chatboard
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.titleContainer}>
-        <View style={styles.titleAndHelpIconContainer}>
-          <Text style={styles.title}>Trusted Network</Text>
-          <TouchableOpacity onPress={toggleModal} style={styles.helpIcon}>
-            <Ionicons name="ios-help-circle-outline" size={28} color="black" />
+    <ScreenWrapper navigation={navigation}>
+      <ScrollView style={styles.container}>
+        <View style={styles.navbar}>
+          <TouchableOpacity onPress={() => setSelectedSection("Network")}>
+            <Text
+              style={
+                selectedSection === "Network"
+                  ? styles.navTextSelected
+                  : styles.navText
+              }
+            >
+              Network
+            </Text>
           </TouchableOpacity>
-        </View>
-        <TouchableOpacity>
-          <Ionicons
-            name="ios-add-circle-outline"
-            size={28}
-            color="black"
-            style={styles.plusIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-        <View style={styles.modal}>
           <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={toggleModal}
+            onPress={() => {
+              setSelectedSection("Play Date");
+              navigation.navigate("Playdate");
+            }}
           >
-            <Text style={styles.modalCloseButtonText}>X</Text>
+            <Text
+              style={
+                selectedSection === "Play Date"
+                  ? styles.navTextSelected
+                  : styles.navText
+              }
+            >
+              Play Date
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>What's Trusted Network?</Text>
-          <Text style={styles.modalContent}>
-            This is your network of trusted walkers or sitters that you've
-            worked with or people you know personally who use Pup Planner. Add
-            them manually or from their profile!
-          </Text>
+          <TouchableOpacity onPress={() => setSelectedSection("Chatboard")}>
+            <Text
+              style={
+                selectedSection === "Chatboard"
+                  ? styles.navTextSelected
+                  : styles.navText
+              }
+            >
+              Chatboard
+            </Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
 
-      <View style={styles.usersContainer}>
-        {users.map((user) => (
-          <View key={user.id} style={styles.userCard}>
-            <View style={styles.imageContainer}>
-              <Image source={user.image} style={styles.userImage} />
-            </View>
-            <View style={styles.formContainer}>
-              <View style={styles.textAndIconContainer}>
-                <Text style={styles.userName}>{user.name}</Text>
-                <TouchableOpacity>
-                  <Ionicons name="ios-create-outline" size={28} color="black" />
-                </TouchableOpacity>
-              </View>
-            </View>
+        <View style={styles.titleContainer}>
+          <View style={styles.titleAndHelpIconContainer}>
+            <Text style={styles.title}>Trusted Network</Text>
+            <TouchableOpacity onPress={toggleModal} style={styles.helpIcon}>
+              <Ionicons
+                name="ios-help-circle-outline"
+                size={28}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
-        ))}
-      </View>
-
-      <View style={styles.titleContainer}>
-        <View style={styles.titleAndHelpIconContainer}>
-          <Text style={styles.title}>Help Requests</Text>
-          <TouchableOpacity
-            onPress={toggleHelpRequestModal}
-            style={styles.helpIcon}
-          >
-            <Ionicons name="ios-help-circle-outline" size={28} color="black" />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity>
-          <Ionicons
-            name="ios-add-circle-outline"
-            size={28}
-            color="black"
-            style={styles.plusIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        isVisible={isHelpRequestModalVisible}
-        onBackdropPress={toggleHelpRequestModal}
-      >
-        <View style={styles.modal}>
-          <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={toggleHelpRequestModal}
-          >
-            <Text style={styles.modalCloseButtonText}>X</Text>
-          </TouchableOpacity>
-          <Text style={styles.modalTitle}>What's a Help Request?</Text>
-          <Text style={styles.modalContent}>
-            These are requests posted by your trusted network! You can post your
-            own or lend a helping hand!
-          </Text>
-        </View>
-      </Modal>
-
-      <View style={styles.usersContainer}>
-        {users.map(
-          (user) =>
-            user.helpRequest && (
-              <View key={user.id} style={styles.userCard}>
-                <View style={styles.imageContainer}>
-                  <Image source={user.image} style={styles.userImage} />
-                  <Text style={styles.userName}>{user.name}</Text>
-                </View>
-                <View style={styles.formContainer}>
-                  <View style={styles.textAndIconContainer}>
-                    <Text style={styles.userName}>{user.helpRequest}</Text>
-                  </View>
-                </View>
-              </View>
-            )
-        )}
-      </View>
-
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Trusted Network Feed</Text>
-        <TouchableOpacity>
-          <Ionicons
-            name="ios-add-circle-outline"
-            size={28}
-            color="black"
-            style={styles.plusIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.feedCard}>
-        <Image
-          source={require("../assets/network_dog_1.png")}
-          style={styles.feedImage}
-        />
-        <View style={styles.userInfoContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/john.png")}
-              style={styles.userImage}
+          <TouchableOpacity>
+            <Ionicons
+              name="ios-add-circle-outline"
+              size={28}
+              color="black"
+              style={styles.plusIcon}
             />
-            <Text style={styles.userName}>John</Text>
-          </View>
-          <View style={styles.feedFormContainer}>
-            <Text>
-              Cooper has been doing so well with his training! Celebrating with
-              a puppucino!
+          </TouchableOpacity>
+        </View>
+
+        <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+          <View style={styles.modal}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={toggleModal}
+            >
+              <Text style={styles.modalCloseButtonText}>X</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>What's Trusted Network?</Text>
+            <Text style={styles.modalContent}>
+              This is your network of trusted walkers or sitters that you've
+              worked with or people you know personally who use Pup Planner. Add
+              them manually or from their profile!
             </Text>
           </View>
-        </View>
-      </View>
+        </Modal>
 
-      <View style={styles.feedCard}>
-        <Image
-          source={require("../assets/network_dog_2.png")}
-          style={styles.feedImage}
-        />
-        <View style={styles.userInfoContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/sammy.png")}
-              style={styles.userImage}
-            />
-            <Text style={styles.userName}>Sammy</Text>
+        <View style={styles.usersContainer}>
+          {users.map((user) => (
+            <View key={user.id} style={styles.userCard}>
+              <View style={styles.imageContainer}>
+                <Image source={user.image} style={styles.userImage} />
+              </View>
+              <View style={styles.formContainer}>
+                <View style={styles.textAndIconContainer}>
+                  <Text style={styles.userName}>{user.name}</Text>
+                  <TouchableOpacity>
+                    <Ionicons
+                      name="ios-create-outline"
+                      size={28}
+                      color="black"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.titleContainer}>
+          <View style={styles.titleAndHelpIconContainer}>
+            <Text style={styles.title}>Help Requests</Text>
+            <TouchableOpacity
+              onPress={toggleHelpRequestModal}
+              style={styles.helpIcon}
+            >
+              <Ionicons
+                name="ios-help-circle-outline"
+                size={28}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
-          <View style={styles.feedFormContainer}>
-            <Text>Weekly hike with my sweet bb {"<3"}</Text>
+          <TouchableOpacity>
+            <Ionicons
+              name="ios-add-circle-outline"
+              size={28}
+              color="black"
+              style={styles.plusIcon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <Modal
+          isVisible={isHelpRequestModalVisible}
+          onBackdropPress={toggleHelpRequestModal}
+        >
+          <View style={styles.modal}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={toggleHelpRequestModal}
+            >
+              <Text style={styles.modalCloseButtonText}>X</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>What's a Help Request?</Text>
+            <Text style={styles.modalContent}>
+              These are requests posted by your trusted network! You can post
+              your own or lend a helping hand!
+            </Text>
+          </View>
+        </Modal>
+
+        <View style={styles.usersContainer}>
+          {users.map(
+            (user) =>
+              user.helpRequest && (
+                <View key={user.id} style={styles.userCard}>
+                  <View style={styles.imageContainer}>
+                    <Image source={user.image} style={styles.userImage} />
+                    <Text style={styles.userName}>{user.name}</Text>
+                  </View>
+                  <View style={styles.formContainer}>
+                    <View style={styles.textAndIconContainer}>
+                      <Text style={styles.userName}>{user.helpRequest}</Text>
+                    </View>
+                  </View>
+                </View>
+              )
+          )}
+        </View>
+
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Trusted Network Feed</Text>
+          <TouchableOpacity>
+            <Ionicons
+              name="ios-add-circle-outline"
+              size={28}
+              color="black"
+              style={styles.plusIcon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.feedCard}>
+          <Image
+            source={require("../assets/network_dog_1.png")}
+            style={styles.feedImage}
+          />
+          <View style={styles.userInfoContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={require("../assets/john.png")}
+                style={styles.userImage}
+              />
+              <Text style={styles.userName}>John</Text>
+            </View>
+            <View style={styles.feedFormContainer}>
+              <Text>
+                Cooper has been doing so well with his training! Celebrating
+                with a puppucino!
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+
+        <View style={styles.feedCard}>
+          <Image
+            source={require("../assets/network_dog_2.png")}
+            style={styles.feedImage}
+          />
+          <View style={styles.userInfoContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={require("../assets/sammy.png")}
+                style={styles.userImage}
+              />
+              <Text style={styles.userName}>Sammy</Text>
+            </View>
+            <View style={styles.feedFormContainer}>
+              <Text>Weekly hike with my sweet bb {"<3"}</Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </ScreenWrapper>
   );
 };
 

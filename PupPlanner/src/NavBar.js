@@ -31,7 +31,7 @@ const DropdownMenu = ({ navigation, closeMenu }) => {
 
   const handleItemPress = (item) => {
     navigation.navigate(item);
-    closeMenu(); // close the menu when an item is clicked
+    closeMenu();
   };
 
   return (
@@ -65,9 +65,13 @@ const NavBar = ({ navigation }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("state", () => {
-      setIsMenuVisible(false);
-    });
+    let unsubscribe = () => {};
+
+    if (navigation) {
+      unsubscribe = navigation.addListener("blur", () => {
+        setIsMenuVisible(false);
+      });
+    }
 
     return unsubscribe;
   }, [navigation]);
@@ -88,27 +92,16 @@ const NavBar = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={closeMenu}>
       <View style={styles.navbar}>
         <TouchableOpacity onPress={handleMenuClick}>
-          <MaterialIcons
-            name="menu"
-            size={24}
-            color="black"
-          />
+          <MaterialIcons name="menu" size={24} color="black" />
         </TouchableOpacity>
         {isMenuVisible && (
-          <DropdownMenu
-            navigation={navigation}
-            closeMenu={closeMenu}
-          />
+          <DropdownMenu navigation={navigation} closeMenu={closeMenu} />
         )}
         <TouchableOpacity onPress={handleDogIconClick}>
           <Image source={require("../assets/gray_logo.png")} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-          <MaterialIcons
-            name="search"
-            size={24}
-            color="black"
-          />
+          <MaterialIcons name="search" size={24} color="black" />
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
@@ -129,7 +122,7 @@ const styles = StyleSheet.create({
   dropdownMenu: {
     position: "absolute",
     width: 200,
-    top: 80, // Adjust the top value to move the dropdown menu down
+    top: 80,
     left: 10,
     backgroundColor: "#B8DFA9",
     borderRadius: 12,
