@@ -14,6 +14,7 @@ import Community from "./src/Dashboard/components/Community";
 import Learning from "./src/Dashboard/components/Learning";
 import Services from "./src/Dashboard/components/Services";
 import Playdate from "./src/Dashboard/components/Playdate";
+import Chatboard from "./src/Dashboard/components/Chatboard";
 import Settings from "./src/Dashboard/components/Settings";
 import { firebase } from "./Firebase/firebase.js";
 
@@ -54,6 +55,7 @@ const App = () => {
         />
         <Stack.Screen name="Community" component={Community} />
         <Stack.Screen name="Playdate" component={Playdate} />
+        <Stack.Screen name="Chatboard" component={Chatboard} />
         <Stack.Screen name="Learning" component={Learning} />
         <Stack.Screen name="Services" component={Services} />
         <Stack.Screen name="Settings" component={Settings} />

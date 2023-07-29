@@ -73,7 +73,12 @@ const Community = ({ navigation }) => {
               Play Date
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setSelectedSection("Chatboard")}>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedSection("Chatboard");
+              navigation.navigate("Chatboard");
+            }}
+          >
             <Text
               style={
                 selectedSection === "Chatboard"
