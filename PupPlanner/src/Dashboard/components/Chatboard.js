@@ -1,22 +1,27 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import ScreenWrapper from "../../ScreenWrapper";
+import AppContext from "./AppContext";
 
 const Chatboard = ({ navigation }) => {
-  const [selectedSection, setSelectedSection] = useState("Play Date");
+  const { selectedTab, setSelectedTab } = useContext(AppContext);
+
+  useEffect(() => {
+    setSelectedTab("Chatboard");
+  }, []);
 
   return (
     <ScreenWrapper navigation={navigation}>
       <View style={styles.navbar}>
         <TouchableOpacity
           onPress={() => {
-            setSelectedSection("Network");
+            setSelectedTab("Network");
             navigation.navigate("Community");
           }}
         >
           <Text
             style={
-              selectedSection === "Network"
+              selectedTab === "Network"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -26,13 +31,13 @@ const Chatboard = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setSelectedSection("Play Date");
+            setSelectedTab("Play Date");
             navigation.navigate("Playdate");
           }}
         >
           <Text
             style={
-              selectedSection === "Play Date"
+              selectedTab === "Play Date"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -40,10 +45,10 @@ const Chatboard = ({ navigation }) => {
             Play Date
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedSection("Chatboard")}>
+        <TouchableOpacity onPress={() => setSelectedTab("Chatboard")}>
           <Text
             style={
-              selectedSection === "Chatboard"
+              selectedTab === "Chatboard"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -51,6 +56,10 @@ const Chatboard = ({ navigation }) => {
             Chatboard
           </Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.imageContainer}>
+        <Image source={require("../assets/lin.png")} style={styles.image} />
       </View>
     </ScreenWrapper>
   );
@@ -67,7 +76,16 @@ const styles = StyleSheet.create({
     color: "black",
   },
   navTextSelected: {
-    color: "blue",
+    textDecorationLine: "underline",
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 

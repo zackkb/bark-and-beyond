@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -10,11 +10,16 @@ import {
 } from "react-native";
 import ScreenWrapper from "../../ScreenWrapper";
 import Icon from "react-native-vector-icons/FontAwesome";
+import AppContext from "./AppContext";
 
 const Playdate = ({ navigation }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedSection, setSelectedSection] = useState("Play Date");
+  const { selectedTab, setSelectedTab } = useContext(AppContext);
   const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    setSelectedTab("Play Date");
+  }, []);
 
   const handlePress = () => {
     setIsExpanded(!isExpanded);
@@ -27,13 +32,13 @@ const Playdate = ({ navigation }) => {
       <View style={styles.navbar}>
         <TouchableOpacity
           onPress={() => {
-            setSelectedSection("Network");
+            setSelectedTab("Network");
             navigation.navigate("Community");
           }}
         >
           <Text
             style={
-              selectedSection === "Network"
+              selectedTab === "Network"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -41,10 +46,10 @@ const Playdate = ({ navigation }) => {
             Network
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedSection("Play Date")}>
+        <TouchableOpacity onPress={() => setSelectedTab("Play Date")}>
           <Text
             style={
-              selectedSection === "Play Date"
+              selectedTab === "Play Date"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -54,13 +59,13 @@ const Playdate = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setSelectedSection("Chatboard");
+            setSelectedTab("Chatboard");
             navigation.navigate("Chatboard");
           }}
         >
           <Text
             style={
-              selectedSection === "Chatboard"
+              selectedTab === "Chatboard"
                 ? styles.navTextSelected
                 : styles.navText
             }
@@ -102,8 +107,12 @@ const Playdate = ({ navigation }) => {
         {isExpanded && (
           <View>
             <Text style={styles.expandedText}>
-              Can play for long periods of time and loves to fetch. Gets along
-              with every dog and person he meets.
+              Meet Max, a friendly and energetic Golden Retriever who loves to
+              play and socialize with other dogs. Max's owner is hoping to set
+              up a play date with other dog owners in the area, as Max always
+              has a blast playing with his furry friends. With his wagging tail
+              and playful demeanor, Max is sure to bring a smile to anyone's
+              face and make new doggie friends in no time!
             </Text>
           </View>
         )}
@@ -265,5 +274,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "space-between",
+  },
+  navTextSelected: {
+    textDecorationLine: "underline",
   },
 });
