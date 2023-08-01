@@ -7,7 +7,7 @@ import {
   Image,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/Ionicons";
 import ScreenWrapper from "../../ScreenWrapper";
 import AppContext from "./AppContext";
 
@@ -89,11 +89,11 @@ const Chatboard = ({ navigation }) => {
 
       <View style={styles.header}>
         <View style={styles.newPostContainer}>
-          <Icon name="plus-circle" size={20} color="black" />
+          <Icon name="add-circle-outline" size={20} color="black" />
           <Text style={styles.headerText}>New Post</Text>
         </View>
         <View style={styles.filterContainer}>
-          <Icon name="filter" size={20} color="black" />
+          <Icon name="filter-outline" size={20} color="black" />
           <Text style={styles.headerText}>Filter</Text>
         </View>
       </View>
