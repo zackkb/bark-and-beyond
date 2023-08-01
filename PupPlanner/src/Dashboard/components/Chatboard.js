@@ -1,7 +1,36 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  View,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import ScreenWrapper from "../../ScreenWrapper";
 import AppContext from "./AppContext";
+
+const Post = ({ image, name, title, content, comments }) => {
+  return (
+    <View>
+      <View style={styles.postContainer}>
+        <View style={styles.profileContainer}>
+          <Image source={image} style={styles.profilePic} />
+          <Text style={styles.profileName}>{name}</Text>
+        </View>
+        <View style={styles.postContent}>
+          <Text style={styles.postTitle}>{title}</Text>
+          <Text style={styles.postText}>{content}</Text>
+        </View>
+      </View>
+      <View style={styles.commentsContainer}>
+        <Text style={styles.commentsText}>{comments} Comments</Text>
+      </View>
+      <View style={styles.separator} />
+    </View>
+  );
+};
 
 const Chatboard = ({ navigation }) => {
   const { selectedTab, setSelectedTab } = useContext(AppContext);
@@ -11,7 +40,7 @@ const Chatboard = ({ navigation }) => {
   }, []);
 
   return (
-    <ScreenWrapper navigation={navigation}>
+    <ScreenWrapper navigation={navigation} style={styles.screenWrapper}>
       <View style={styles.navbar}>
         <TouchableOpacity
           onPress={() => {
@@ -58,9 +87,58 @@ const Chatboard = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.imageContainer}>
-        <Image source={require("../assets/lin.png")} style={styles.image} />
+      <View style={styles.header}>
+        <View style={styles.newPostContainer}>
+          <Icon name="plus-circle" size={20} color="black" />
+          <Text style={styles.headerText}>New Post</Text>
+        </View>
+        <View style={styles.filterContainer}>
+          <Icon name="filter" size={20} color="black" />
+          <Text style={styles.headerText}>Filter</Text>
+        </View>
       </View>
+
+      <ScrollView style={styles.scrollView}>
+        <Post
+          image={require("../assets/remi.png")}
+          name="Remi"
+          title="Dog Reactive When Leashed"
+          content="Hello, everyone. I'm a concerned dog owner in need of some advice..."
+          comments={5}
+        />
+
+        <Post
+          image={require("../assets/josh.png")}
+          name="Josh"
+          title="Successfully house trained!!"
+          content="We did it guys! Thanks to all your advice and Bark & Beyond’s training..."
+          comments={10}
+        />
+
+        <Post
+          image={require("../assets/joon.png")}
+          name="Joon"
+          title="New dog doesn't get along"
+          content="My adopted puppy and older dog aren’t getting along, anyone..."
+          comments={11}
+        />
+
+        <Post
+          image={require("../assets/sam.png")}
+          name="Sam"
+          title="How to help dog decompress"
+          content="So I’m fostering a very good boy but he’s obviously still tense..."
+          comments={2}
+        />
+
+        <Post
+          image={require("../assets/lin.png")}
+          name="Lin"
+          title="Appreciation post for all the b..."
+          content="Seriously I am so thankful to have found a community like you..."
+          comments={3}
+        />
+      </ScrollView>
     </ScreenWrapper>
   );
 };
@@ -78,6 +156,27 @@ const styles = StyleSheet.create({
   navTextSelected: {
     textDecorationLine: "underline",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
+    paddingTop: 20,
+    backgroundColor: "white",
+  },
+  newPostContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  filterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  headerText: {
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
   imageContainer: {
     flex: 1,
     justifyContent: "center",
@@ -86,6 +185,56 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+  },
+  postContainer: {
+    flexDirection: "row",
+    padding: 10,
+    marginVertical: 10,
+    backgroundColor: "#FFF",
+  },
+  profilePic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  profileContainer: {
+    alignItems: "center",
+    marginRight: 10,
+  },
+  profileName: {
+    marginTop: 5,
+    textAlign: "center",
+  },
+  postContent: {
+    flex: 1,
+  },
+  postTitle: {
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  postText: {
+    fontSize: 14,
+    marginTop: 5,
+  },
+  commentsContainer: {
+    alignItems: "flex-end",
+    paddingRight: 10,
+  },
+  commentsText: {
+    color: "black",
+    fontSize: 12,
+  },
+  screenWrapper: {
+    backgroundColor: "white",
+  },
+  scrollView: {
+    backgroundColor: "white",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#888",
+    marginVertical: 10,
   },
 });
 

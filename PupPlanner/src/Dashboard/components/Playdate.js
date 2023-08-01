@@ -12,6 +12,8 @@ import ScreenWrapper from "../../ScreenWrapper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AppContext from "./AppContext";
 
+const deviceWidth = Dimensions.get("window").width;
+
 const Playdate = ({ navigation }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { selectedTab, setSelectedTab } = useContext(AppContext);
@@ -25,7 +27,14 @@ const Playdate = ({ navigation }) => {
     setIsExpanded(!isExpanded);
   };
 
-  const deviceWidth = Dimensions.get("window").width;
+  const [showToast, setShowToast] = useState(false);
+  const handleHeartPress = () => {
+    setIsLiked(!isLiked);
+    if (!isLiked) {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
+  };
 
   return (
     <ScreenWrapper navigation={navigation}>
@@ -86,23 +95,27 @@ const Playdate = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.heartButton}
-            onPress={() => setIsLiked(!isLiked)}
+            onPress={handleHeartPress}
           >
             <Icon name="heart" size={30} color={isLiked ? "red" : "white"} />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handlePress}>
-          <Text style={styles.boldText}>Max, 1 year old, 50lbs</Text>
-          <Text style={styles.normalText}>
-            Super friendly, loves all dogs, very gentle
-          </Text>
-          <View style={styles.groupTextContainer}>
-            <Text style={styles.normalText}>Group or 1:1 play</Text>
-            {!isExpanded && <Icon name="chevron-down" size={16} />}
-            {isExpanded && <Icon name="chevron-up" size={16} />}
+        {showToast && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>Such a good boy!</Text>
           </View>
-        </TouchableOpacity>
+        )}
+
+        <Text style={styles.boldText}>Max, 1 year old, 50lbs</Text>
+        <Text style={styles.normalText}>
+          Super friendly, loves all dogs, very gentle
+        </Text>
+        <View style={styles.groupTextContainer}>
+          <Text style={styles.normalText}>Group or 1:1 play</Text>
+          {!isExpanded && <Icon name="chevron-down" size={16} />}
+          {isExpanded && <Icon name="chevron-up" size={16} />}
+        </View>
 
         {isExpanded && (
           <View>
@@ -136,7 +149,6 @@ const Playdate = ({ navigation }) => {
               </View>
             </View>
           </View>
-          {/* New profile for 'Ruff' */}
           <View style={styles.userCard}>
             <View style={styles.profileContainer}>
               <Image
@@ -158,12 +170,10 @@ const Playdate = ({ navigation }) => {
   );
 };
 
-export default Playdate;
-
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 10,
+    paddingTop: 40,
   },
   navbar: {
     flexDirection: "row",
@@ -215,14 +225,14 @@ const styles = StyleSheet.create({
   closeButton: {
     position: "absolute",
     bottom: "50%",
-    left: 20,
+    left: 30,
     padding: 10,
     transform: [{ translateY: 15 }],
   },
   heartButton: {
     position: "absolute",
     bottom: "50%",
-    right: 20,
+    right: 30,
     padding: 10,
     transform: [{ translateY: 15 }],
   },
@@ -278,4 +288,19 @@ const styles = StyleSheet.create({
   navTextSelected: {
     textDecorationLine: "underline",
   },
+  toast: {
+    position: "absolute",
+    zIndex: 999,
+    top: deviceWidth * 0.6,
+    alignSelf: "center",
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: 30,
+    padding: 10,
+  },
+  toastText: {
+    color: "white",
+    fontSize: 16,
+  },
 });
+
+export default Playdate;
