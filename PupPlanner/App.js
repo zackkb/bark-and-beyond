@@ -16,6 +16,7 @@ import Services from "./src/Dashboard/components/Services";
 import Playdate from "./src/Dashboard/components/Playdate";
 import Chatboard from "./src/Dashboard/components/Chatboard";
 import Settings from "./src/Dashboard/components/Settings";
+import PostDetail from "./src/Dashboard/components/PostDetail";
 import { firebase } from "./Firebase/firebase.js";
 import AppContext from "./src/Dashboard/components/AppContext";
 
@@ -62,6 +63,7 @@ const App = () => {
           <Stack.Screen name="Learning" component={Learning} />
           <Stack.Screen name="Services" component={Services} />
           <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="PostDetail" component={PostDetail} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>

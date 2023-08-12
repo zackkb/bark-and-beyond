@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import AppContext from "./AppContext";
 
 const deviceWidth = Dimensions.get("window").width;
+const deviceHeight = Dimensions.get("window").height;
 
 const Playdate = ({ navigation }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -83,6 +84,7 @@ const Playdate = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
+
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageContainer}>
           <Image
@@ -107,64 +109,74 @@ const Playdate = ({ navigation }) => {
           </View>
         )}
 
-        <Text style={styles.boldText}>Max, 1 year old, 50lbs</Text>
-        <Text style={styles.normalText}>
-          Super friendly, loves all dogs, very gentle
-        </Text>
-        <View style={styles.groupTextContainer}>
-          <Text style={styles.normalText}>Group or 1:1 play</Text>
-          {!isExpanded && <Icon name="chevron-down" size={16} />}
-          {isExpanded && <Icon name="chevron-up" size={16} />}
-        </View>
+        <TouchableOpacity onPress={handlePress}>
+          <Text style={styles.boldText}>Max, 1 year old, 50lbs</Text>
+          <Text style={styles.normalText}>
+            Super friendly, loves all dogs, very gentle
+          </Text>
+          <View style={styles.groupTextContainer}>
+            <Text style={styles.normalText}>Group or 1:1 play</Text>
+          </View>
+        </TouchableOpacity>
 
         {isExpanded && (
-          <View>
-            <Text style={styles.expandedText}>
-              Meet Max, a friendly and energetic Golden Retriever who loves to
-              play and socialize with other dogs. Max's owner is hoping to set
-              up a play date with other dog owners in the area, as Max always
-              has a blast playing with his furry friends. With his wagging tail
-              and playful demeanor, Max is sure to bring a smile to anyone's
-              face and make new doggie friends in no time!
-            </Text>
+          <View style={styles.expandedContainer}>
+            <View style={styles.expandedTextContainer}>
+              <Text style={styles.expandedText}>
+                Meet Max, a friendly and energetic Golden Retriever who loves to
+                play and socialize with other dogs. Max's owner is hoping to set
+                up a play date with other dog owners in the area, as Max always
+                has a blast playing with his furry friends. With his wagging
+                tail and playful demeanor, Max is sure to bring a smile to
+                anyone's face and make new doggie friends in no time!
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.messageButton}>
+              <Text style={styles.buttonText}>Message</Text>
+            </TouchableOpacity>
           </View>
         )}
 
-        <View style={styles.separator} />
+        {!isExpanded && (
+          <>
+            <View style={styles.separator} />
+            <View style={styles.localContainer}>
+              <Text style={styles.title}>Local to you</Text>
 
-        <View style={styles.localContainer}>
-          <Text style={styles.title}>Local to you</Text>
-          <View style={styles.userCard}>
-            <View style={styles.profileContainer}>
-              <Image
-                source={require("../assets/snoopy.png")}
-                style={styles.userImage}
-              />
-              <Text style={styles.userName}>Snoopy</Text>
-            </View>
-            <View style={styles.formContainer}>
-              <View style={styles.textAndIconContainer}>
-                <Text style={styles.userInfoBold}>2 years old, 25lbs</Text>
-                <Text style={styles.userInfo}>Group Play</Text>
+              <View style={styles.userCard}>
+                <View style={styles.profileContainer}>
+                  <Image
+                    source={require("../assets/snoopy.png")}
+                    style={styles.userImage}
+                  />
+                  <Text style={styles.userName}>Snoopy</Text>
+                </View>
+                <View style={styles.formContainer}>
+                  <View style={styles.textAndIconContainer}>
+                    <Text style={styles.userInfoBold}>2 years old, 25lbs</Text>
+                    <Text style={styles.userInfo}>Group Play</Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.userCard}>
+                <View style={styles.profileContainer}>
+                  <Image
+                    source={require("../assets/ruff.png")}
+                    style={styles.userImage}
+                  />
+                  <Text style={styles.userName}>Ruff</Text>
+                </View>
+                <View style={styles.formContainer}>
+                  <View style={styles.textAndIconContainer}>
+                    <Text style={styles.userInfoBold}>3 years old</Text>
+                    <Text style={styles.userInfo}>1:1 Play</Text>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.userCard}>
-            <View style={styles.profileContainer}>
-              <Image
-                source={require("../assets/ruff.png")}
-                style={styles.userImage}
-              />
-              <Text style={styles.userName}>Ruff</Text>
-            </View>
-            <View style={styles.formContainer}>
-              <View style={styles.textAndIconContainer}>
-                <Text style={styles.userInfoBold}>3 years old</Text>
-                <Text style={styles.userInfo}>1:1 Play</Text>
-              </View>
-            </View>
-          </View>
-        </View>
+          </>
+        )}
       </ScrollView>
     </ScreenWrapper>
   );
@@ -204,15 +216,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   messageButton: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    width: "45%",
+    width: 122,
+    height: 48,
+    marginTop: 20,
+    marginBottom: 20,
     padding: 12,
     borderRadius: 30,
     backgroundColor: "#323841",
-    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     color: "#FFFFFF",
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
   toast: {
     position: "absolute",
     zIndex: 999,
-    top: deviceWidth * 0.6,
+    top: deviceHeight * 0.5,
     alignSelf: "center",
     backgroundColor: "rgba(0,0,0,0.7)",
     borderRadius: 30,
@@ -300,6 +312,20 @@ const styles = StyleSheet.create({
   toastText: {
     color: "white",
     fontSize: 16,
+  },
+  expandedText: {
+    justifyContent: "center",
+    fontSize: 17,
+    fontWeight: 400,
+  },
+  expandedTextContainer: {
+    width: "90%",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  expandedContainer: {
+    alignItems: "center",
+    width: "100%",
   },
 });
 

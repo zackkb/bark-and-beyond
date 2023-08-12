@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import ScreenWrapper from "../../ScreenWrapper";
 import AppContext from "./AppContext";
 
-const Post = ({ image, name, title, content, comments }) => {
+const Post = ({ navigation, image, name, title, content, comments }) => {
   return (
     <View>
       <View style={styles.postContainer}>
@@ -99,13 +99,16 @@ const Chatboard = ({ navigation }) => {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        <Post
-          image={require("../assets/remi.png")}
-          name="Remi"
-          title="Dog Reactive When Leashed"
-          content="Hello, everyone. I'm a concerned dog owner in need of some advice..."
-          comments={5}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("PostDetail")}>
+          <Post
+            navigation={navigation}
+            image={require("../assets/remi.png")}
+            name="Remi"
+            title="Dog Reactive When Leashed"
+            content="Hello, everyone. I'm a concerned dog owner in need of some advice..."
+            comments={5}
+          />
+        </TouchableOpacity>
 
         <Post
           image={require("../assets/josh.png")}
