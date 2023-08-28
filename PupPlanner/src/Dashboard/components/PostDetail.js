@@ -21,12 +21,14 @@ I'm reaching out to the forum to see if anyone has any experience with this kind
 Thank you in advance for your help and insights!`;
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.navBar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Chatboard")}>
-          <Text style={styles.backButton}>&lt;</Text>
-        </TouchableOpacity>
-        <Text style={styles.editText}>Edit</Text>
+    <ScrollView style={styles.container} stickyHeaderIndices={[0]}>
+      <View style={styles.navBarContainer}>
+        <View style={styles.navBar}>
+          <TouchableOpacity onPress={() => navigation.navigate("Chatboard")}>
+            <Text style={styles.backButton}>&lt;</Text>
+          </TouchableOpacity>
+          <Text style={styles.editText}>Edit</Text>
+        </View>
       </View>
       <View style={styles.headerContainer}>
         <View style={styles.profileContainer}>
