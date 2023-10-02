@@ -6,11 +6,26 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import ScreenWrapper from "../../ScreenWrapper";
+import Icon from "react-native-vector-icons/Ionicons";
+
+const Comment = ({ image, name, content }) => {
+  return (
+    <View style={styles.commentContainer}>
+      <Image source={image} style={styles.commentProfilePic} />
+      <View style={styles.commentTextContainer}>
+        <Text style={styles.commentName}>{name}</Text>
+        <Text style={styles.commentText}>{content}</Text>
+      </View>
+    </View>
+  );
+};
 
 const Learning = ({ navigation }) => {
   const [showDetailedText, setShowDetailedText] = useState(false);
+  const [comment, setComment] = useState("");
 
   const handleMoreClick = () => {
     setShowDetailedText(true);
@@ -21,7 +36,7 @@ const Learning = ({ navigation }) => {
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper navigation={navigation}>
       {showDetailedText ? (
         <ScrollView contentContainerStyle={styles.detailedTextContainer}>
           <TouchableOpacity onPress={handleBackClick}>
@@ -55,6 +70,44 @@ const Learning = ({ navigation }) => {
             preferences. It's always a good idea to consult with a veterinarian
             to determine the best diet for your furry friend.
           </Text>
+
+          <View style={styles.separator} />
+
+          <View style={styles.commentsHeaderContainer}>
+            <Text style={styles.commentsHeader}>Comments</Text>
+            <View style={styles.commentCountBox}>
+              <Text style={styles.commentCount}>2</Text>
+            </View>
+          </View>
+
+          <View style={styles.commentInputContainer}>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Comment..."
+              placeholderTextColor="gray"
+              value={comment}
+              onChangeText={setComment}
+            />
+            <TouchableOpacity style={styles.sendIconContainer}>
+              <Icon name="send" size={20} color="black" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.commentSeparator} />
+
+          <Comment
+            image={require("../assets/jenny.png")}
+            name="Jenny"
+            content="Wow, so I feed my dog dry kibble. Maybe I should start feeding her some wet food too!"
+          />
+
+          <View style={styles.commentSeparator} />
+
+          <Comment
+            image={require("../assets/jorge.png")}
+            name="Jorge"
+            content="My dog is older so he gets lots of wet food! Helps with his hydration too!"
+          />
         </ScrollView>
       ) : (
         <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -102,7 +155,7 @@ const Learning = ({ navigation }) => {
               <Text style={styles.normalText}>
                 Has your dog been having bathroom breaks on your carpet? Well
                 here are some factors that may be causing your dog to go where
-                they aren’t suppose to.
+                they aren’t supposed to.
               </Text>
             </View>
             <Image
@@ -121,8 +174,8 @@ const Learning = ({ navigation }) => {
             <View style={styles.textContainer}>
               <Text style={styles.headingText}>Doggy Daycare</Text>
               <Text style={styles.normalText}>
-                Doggy daycare is a great option if you work a full time job and
-                aren’t home all the time. Its beneficial to socialize your dog
+                Doggy daycare is a great option if you work a full-time job and
+                aren’t home all the time. It's beneficial to socialize your dog
                 more and allow them to get exercise during the day.
               </Text>
             </View>
@@ -212,6 +265,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 20,
   },
+  commentSeparator: {
+    height: 1,
+    backgroundColor: "#888",
+    marginVertical: 10,
+  },
   pottyProblemsContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -251,5 +309,80 @@ const styles = StyleSheet.create({
   backIcon: {
     fontSize: 30,
     marginBottom: 10,
+  },
+  commentsHeaderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  commentsHeader: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+    textAlign: "left",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  commentCountBox: {
+    backgroundColor: "#FFF",
+    width: 24,
+    height: 24,
+    flexShrink: 0,
+    borderRadius: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+    marginLeft: 10,
+  },
+  commentCount: {
+    color: "#4A7790",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  commentInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  commentInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "black",
+  },
+  sendIconContainer: {
+    marginLeft: 10,
+  },
+  commentContainer: {
+    flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+  },
+  commentProfilePic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  commentTextContainer: {
+    flex: 1,
+  },
+  commentName: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  commentText: {
+    fontSize: 14,
+    marginTop: 5,
   },
 });

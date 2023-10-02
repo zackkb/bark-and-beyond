@@ -32,8 +32,6 @@ const Community = ({ navigation }) => {
   const [isHelpRequestModalVisible, setHelpRequestModalVisible] =
     useState(false);
 
-  //const [selectedSection, setSelectedSection] = useState("Network");
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
