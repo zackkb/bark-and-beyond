@@ -11,20 +11,21 @@ import CreateProfile from "./src/Onboarding/components/CreateProfile";
 import CreateDogProfile from "./src/Onboarding/components/CreateDogProfile";
 import Dashboard from "./src/Dashboard/components/Dashboard";
 import Community from "./src/Dashboard/components/Community";
+import AddToPN from "./src/Dashboard/components/AddToPN";
 import Learning from "./src/Dashboard/components/Learning";
 import Services from "./src/Dashboard/components/Services";
 import Playdate from "./src/Dashboard/components/Playdate";
 import Chatboard from "./src/Dashboard/components/Chatboard";
 import Settings from "./src/Dashboard/components/Settings";
 import PostDetail from "./src/Dashboard/components/PostDetail";
+import ProfilePN from "./src/Dashboard/components/ProfilePN";
 import { firebase } from "./Firebase/firebase.js";
-import AppContext from "./src/Dashboard/components/AppContext";
+import RequestHelp from "./src/Dashboard/components/RequestHelp";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [selectedTab, setSelectedTab] = useState("Play Date");
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((currentUser) => {
@@ -39,34 +40,35 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ selectedTab, setSelectedTab }}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Slider"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="Slider" component={Slider} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="CreateProfile" component={CreateProfile} />
-          <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
-          <Stack.Screen
-            name="Dashboard"
-            component={Dashboard}
-            initialParams={{ user }}
-          />
-          <Stack.Screen name="Community" component={Community} />
-          <Stack.Screen name="Playdate" component={Playdate} />
-          <Stack.Screen name="Chatboard" component={Chatboard} />
-          <Stack.Screen name="Learning" component={Learning} />
-          <Stack.Screen name="Services" component={Services} />
-          <Stack.Screen name="Settings" component={Settings} />
-          <Stack.Screen name="PostDetail" component={PostDetail} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AppContext.Provider>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Slider"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="Slider" component={Slider} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="CreateProfile" component={CreateProfile} />
+        <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          initialParams={{ user }}
+        />
+        <Stack.Screen name="Community" component={Community} />
+        <Stack.Screen name="AddToPN" component={AddToPN} />
+        <Stack.Screen name="Playdate" component={Playdate} />
+        <Stack.Screen name="Chatboard" component={Chatboard} />
+        <Stack.Screen name="Learning" component={Learning} />
+        <Stack.Screen name="Services" component={Services} />
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="PostDetail" component={PostDetail} />
+        <Stack.Screen name="ProfilePN" component={ProfilePN} />
+        <Stack.Screen name="RequestHelp" component={RequestHelp} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

@@ -4,6 +4,8 @@ import Calendar from "./Calendar";
 import Navigation from "./Navigation";
 import Notifications from "./Notifications";
 import ScreenWrapper from "../../ScreenWrapper";
+import HelpRequests from "./HelpRequests";
+import TrustedNetworkFeed from "./TrustedNetworkFeed";
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -20,6 +22,7 @@ const Dashboard = ({ route, navigation }) => {
   const [isSliding, setIsSliding] = useState(false);
 
   useEffect(() => {
+    // Check if the user is logged in
     const user = firebase.auth().currentUser;
     if (user) {
       setUserEmail(user.email);
@@ -108,6 +111,8 @@ const Dashboard = ({ route, navigation }) => {
         <Calendar />
         <Notifications />
         <Navigation />
+        <HelpRequests />
+        <TrustedNetworkFeed />
       </ScrollView>
     </ScreenWrapper>
   );
