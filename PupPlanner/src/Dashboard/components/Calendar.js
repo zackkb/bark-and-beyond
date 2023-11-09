@@ -51,19 +51,13 @@ const Calendar = () => {
     <View style={styles.container}>
       {/* Month and arrows */}
       <View style={styles.monthContainer}>
-        <TouchableOpacity
-          onPress={handlePreviousMonth}
-          hitSlop={8}
-        >
+        <TouchableOpacity onPress={handlePreviousMonth} hitSlop={8}>
           <Image source={require("../assets/arrowLeft.png")} />
         </TouchableOpacity>
         <Text style={styles.monthText}>
           {currentMonthName} {currentYear}
         </Text>
-        <TouchableOpacity
-          onPress={handleNextMonth}
-          hitSlop={8}
-        >
+        <TouchableOpacity onPress={handleNextMonth} hitSlop={8}>
           <Image source={require("../assets/arrowRight.png")} />
         </TouchableOpacity>
       </View>
