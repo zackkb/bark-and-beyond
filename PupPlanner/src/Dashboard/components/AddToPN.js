@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   continueButton: {
+    //display: "flex",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",

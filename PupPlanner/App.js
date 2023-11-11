@@ -19,6 +19,7 @@ import Chatboard from "./src/Dashboard/components/Chatboard";
 import Settings from "./src/Dashboard/components/Settings";
 import PostDetail from "./src/Dashboard/components/PostDetail";
 import ProfilePN from "./src/Dashboard/components/ProfilePN";
+import Training from "./src/Training/components/Training";
 import { firebase } from "./Firebase/firebase.js";
 import RequestHelp from "./src/Dashboard/components/RequestHelp";
 
@@ -67,6 +68,7 @@ const App = () => {
         <Stack.Screen name="PostDetail" component={PostDetail} />
         <Stack.Screen name="ProfilePN" component={ProfilePN} />
         <Stack.Screen name="RequestHelp" component={RequestHelp} />
+        <Stack.Screen name="Training" component={Training} />
       </Stack.Navigator>
     </NavigationContainer>
   );

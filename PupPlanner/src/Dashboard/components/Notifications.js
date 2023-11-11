@@ -7,10 +7,12 @@ const Notifications = () => {
       <Text style={styles.topHeader}>Notifications</Text>
 
       <View style={styles.notifyHelp}>
-        <Image
-          source={require("../assets/helpIcon.png")}
-          style={styles.notifyIcon}
-        />
+        <View style={styles.iconContainer}>
+          <Image
+            source={require("../assets/bell.png")}
+            style={styles.notifyIcon}
+          />
+        </View>
         <View style={styles.notifyContent}>
           <Text style={styles.notifyHeader}>Help Request</Text>
           <Text style={styles.notifyText}>March 30th</Text>
@@ -24,10 +26,12 @@ const Notifications = () => {
       </View>
 
       <View style={styles.notifyHelp}>
-        <Image
-          source={require("../assets/checkupIcon.png")}
-          style={styles.notifyIcon}
-        />
+        <View style={styles.iconContainer}>
+          <Image
+            source={require("../assets/clipboard.png")}
+            style={styles.notifyIcon}
+          />
+        </View>
         <View style={styles.notifyContent}>
           <Text style={styles.notifyHeader}>Check-up due</Text>
           <Text style={styles.notifyText}>Due March 31st</Text>
@@ -78,5 +82,20 @@ const styles = StyleSheet.create({
   arrowContainer: {
     alignItems: "flex-end",
     marginRight: 16,
+  },
+  iconContainer: {
+    backgroundColor: "#fff",
+    height: 48,
+    width: "12.5%",
+    borderRadius: 15,
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+    // Elevation property for Android
+    elevation: 6,
+    // Shadow properties for iOS
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowColor: "#000",
   },
 });

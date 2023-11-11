@@ -116,7 +116,7 @@ const Community = ({ navigation }) => {
                 />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("AddToPN")}>
               <Ionicons
                 name="ios-add-circle-outline"
                 size={28}
