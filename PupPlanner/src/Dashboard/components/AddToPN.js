@@ -221,6 +221,6 @@ const styles = StyleSheet.create({
   continueText: {
     color: "#FFF",
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: "600",
   },
 });

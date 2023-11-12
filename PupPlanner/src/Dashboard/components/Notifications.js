@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   topHeader: {
-    fontWeight: 700,
+    fontWeight: "700",
     fontSize: 22,
     paddingLeft: 15,
   },
@@ -91,9 +91,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     justifyContent: "center",
-    // Elevation property for Android
     elevation: 6,
-    // Shadow properties for iOS
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.5,
     shadowColor: "#000",

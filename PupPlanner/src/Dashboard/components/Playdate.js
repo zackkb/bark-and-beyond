@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   expandedText: {
     justifyContent: "center",
     fontSize: 17,
-    fontWeight: 400,
+    fontWeight: "400",
   },
   expandedTextContainer: {
     width: "90%",

@@ -22,6 +22,8 @@ import ProfilePN from "./src/Dashboard/components/ProfilePN";
 import Training from "./src/Training/components/Training";
 import { firebase } from "./Firebase/firebase.js";
 import RequestHelp from "./src/Dashboard/components/RequestHelp";
+import Fetch from "./src/Training/components/Fetch.js";
+import { AppProvider } from "./src/Dashboard/components/AppContext";
 
 const Stack = createStackNavigator();
 
@@ -41,36 +43,39 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Slider"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="Slider" component={Slider} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="CreateProfile" component={CreateProfile} />
-        <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          initialParams={{ user }}
-        />
-        <Stack.Screen name="Community" component={Community} />
-        <Stack.Screen name="AddToPN" component={AddToPN} />
-        <Stack.Screen name="Playdate" component={Playdate} />
-        <Stack.Screen name="Chatboard" component={Chatboard} />
-        <Stack.Screen name="Learning" component={Learning} />
-        <Stack.Screen name="Services" component={Services} />
-        <Stack.Screen name="Settings" component={Settings} />
-        <Stack.Screen name="PostDetail" component={PostDetail} />
-        <Stack.Screen name="ProfilePN" component={ProfilePN} />
-        <Stack.Screen name="RequestHelp" component={RequestHelp} />
-        <Stack.Screen name="Training" component={Training} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Slider"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Slider" component={Slider} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="CreateProfile" component={CreateProfile} />
+          <Stack.Screen name="CreateDogProfile" component={CreateDogProfile} />
+          <Stack.Screen
+            name="Dashboard"
+            component={Dashboard}
+            initialParams={{ user }}
+          />
+          <Stack.Screen name="Community" component={Community} />
+          <Stack.Screen name="AddToPN" component={AddToPN} />
+          <Stack.Screen name="Playdate" component={Playdate} />
+          <Stack.Screen name="Chatboard" component={Chatboard} />
+          <Stack.Screen name="Learning" component={Learning} />
+          <Stack.Screen name="Services" component={Services} />
+          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="PostDetail" component={PostDetail} />
+          <Stack.Screen name="ProfilePN" component={ProfilePN} />
+          <Stack.Screen name="RequestHelp" component={RequestHelp} />
+          <Stack.Screen name="Training" component={Training} />
+          <Stack.Screen name="Fetch" component={Fetch} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppProvider>
   );
 };
 

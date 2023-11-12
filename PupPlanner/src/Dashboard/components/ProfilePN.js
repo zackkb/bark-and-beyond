@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   helpText: {
     color: "#323841",
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: "600",
   },
   puppyInfoContainer: {
     flexDirection: "row",
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   activityHeader: {
     color: "#000",
     fontSize: 22,
-    fontWeight: 700,
+    fontWeight: "700",
   },
   responseRow: {
     flexDirection: "row",
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   respondButtonText: {
     color: "#000",
     fontSize: 16,
-    fontWeight: 700,
+    fontWeight: "700",
     marginRight: 22,
   },
 });
