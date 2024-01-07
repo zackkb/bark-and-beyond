@@ -20,6 +20,7 @@
     "@react-navigation/native-stack": "^6.9.12",
     "@react-navigation/stack": "^6.3.16",
     "expo": "^49.0.0",
+    "expo-av": "~13.4.1",
     "expo-camera": "~13.4.4",
     "expo-dev-client": "~2.4.12",
     "expo-file-system": "~15.4.4",
@@ -29,7 +30,7 @@
     "firebase": "^9.20.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.72.6",
+    "react-native": "^0.72.6",
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -42,8 +43,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-video": "^5.2.1",
     "react-native-web": "~0.19.6",
-    "rn-fetch-blob": "^0.12.0",
-    "expo-av": "~13.4.1"
+    "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

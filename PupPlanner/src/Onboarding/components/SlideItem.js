@@ -18,11 +18,7 @@ const SlideItem = ({ item, index, lastIndex }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={item.img}
-        resizeMode="contain"
-        style={styles.image}
-      />
+      <Image source={item.img} resizeMode="contain" style={styles.image} />
 
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
@@ -78,7 +74,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: "normal",
     lineHeight: 19.36,
     width: "64%",
     color: "#000",

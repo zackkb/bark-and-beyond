@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   boxText: {
     color: "#FCFCFC",
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginBottom: 10,
   },
   pawsImage: {

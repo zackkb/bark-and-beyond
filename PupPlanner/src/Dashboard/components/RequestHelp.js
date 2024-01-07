@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   cancel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
     color: "#323841",
   },
   addContainer: {
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   addToNetwork: {
     color: "#000",
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "bold",
   },
   photoButton: {
     marginTop: 30,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   continueText: {
     color: "#FFF",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
   },
   dropdownContainer: {
     position: "relative",

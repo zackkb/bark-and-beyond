@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginTop: 18,
-    fontWeight: "600",
+    fontWeight: "semibold",
     color: "#FCFCFC",
   },
 });

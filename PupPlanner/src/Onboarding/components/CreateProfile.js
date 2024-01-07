@@ -146,10 +146,7 @@ const CreateProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity
-          style={styles.photoButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
           {image ? (
             <Image
               source={{ uri: image }}
@@ -212,7 +209,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   contact: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 16,
     lineHeight: 24,
     marginTop: 40,
@@ -254,7 +251,7 @@ const styles = StyleSheet.create({
   },
   cancel: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginTop: 24,
     marginBottom: 100,
   },

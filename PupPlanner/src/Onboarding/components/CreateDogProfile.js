@@ -182,10 +182,7 @@ const CreateDogProfile = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Create Profile</Text>
 
-        <TouchableOpacity
-          style={styles.photoButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
           {image ? (
             <Image
               source={{ uri: image }}
@@ -266,7 +263,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   tellUs: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 16,
     lineHeight: 24,
     marginTop: 40,
@@ -316,7 +313,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   goBack: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 16,
     marginTop: 24,
     marginBottom: 86,

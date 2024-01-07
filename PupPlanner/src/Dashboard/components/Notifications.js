@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   topHeader: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 22,
     paddingLeft: 15,
   },
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   notifyHeader: {
-    fontWeight: 600,
+    fontWeight: "semibold",
     fontSize: 16,
   },
   notifyText: {

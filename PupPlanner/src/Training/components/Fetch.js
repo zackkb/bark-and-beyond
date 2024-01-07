@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 20,
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
   },
 });

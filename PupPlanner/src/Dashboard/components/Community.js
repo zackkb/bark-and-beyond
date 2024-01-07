@@ -304,12 +304,12 @@ const styles = StyleSheet.create({
   navText: {
     color: "black",
     fontSize: 14,
-    fontWeight: "400",
+    fontWeight: "normal",
   },
   navTextSelected: {
     color: "black",
     fontSize: 14,
-    fontWeight: "400",
+    fontWeight: "normal",
     textDecorationLine: "underline",
   },
   titleContainer: {

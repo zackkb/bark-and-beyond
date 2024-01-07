@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     color: "#000",
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
   },
   slideOne: {
     width: slideWidth,

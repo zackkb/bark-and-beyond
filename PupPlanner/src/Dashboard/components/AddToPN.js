@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   cancel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
     color: "#323841",
   },
   addContainer: {
@@ -221,6 +221,6 @@ const styles = StyleSheet.create({
   continueText: {
     color: "#FFF",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
   },
 });

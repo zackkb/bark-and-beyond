@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
     color: "#323841",
     marginRight: 24,
   },
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   header: {
     color: "#000",
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginBottom: 16,
   },
   photo: {
@@ -121,13 +121,13 @@ const styles = StyleSheet.create({
   friendName: {
     fontSize: 20,
     color: "#000",
-    fontWeight: "700",
+    fontWeight: "bold",
     marginBottom: 4,
     marginTop: 16,
   },
   friendInfo: {
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: "normal",
     color: "#000",
     marginBottom: 4,
   },
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   helpText: {
     color: "#323841",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
   },
   puppyInfoContainer: {
     flexDirection: "row",
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   puppyInfo: {
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: "normal",
     color: "#000",
     marginBottom: 4,
     marginRight: 16,
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   activityHeader: {
     color: "#000",
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
   },
   responseRow: {
     flexDirection: "row",
@@ -189,12 +189,12 @@ const styles = StyleSheet.create({
   responseText: {
     color: "#000",
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: "normal",
   },
   respondButtonText: {
     color: "#000",
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginRight: 22,
   },
 });

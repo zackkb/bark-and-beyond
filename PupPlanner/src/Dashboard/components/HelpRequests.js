@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: "bold",
     marginLeft: 16,
   },
   requestContact: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   helpName: {
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: "normal",
     color: "#000",
   },
   requestBody: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   requestText: {
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: "normal",
     color: "#000",
   },
   user: {
